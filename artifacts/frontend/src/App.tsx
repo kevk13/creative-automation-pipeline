@@ -118,19 +118,33 @@ function BriefUpload({ onBriefParsed }: { onBriefParsed: (brief: CampaignBrief) 
   const [dragging, setDragging] = useState(false);
   const [brief, setBrief] = useState<CampaignBrief | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [samples, setSamples] = useState<string[]>([]);
+  const [loadingSample, setLoadingSample] = useState<string | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const BASE = import.meta.env.BASE_URL.replace(/\/$/, "");
+
+  useState(() => {
+    fetch(`${BASE}/api/samples`)
+      .then((r) => r.json())
+      .then((d: { samples: string[] }) => setSamples(d.samples ?? []))
+      .catch(() => {});
+  });
+
+  const parseBriefText = useCallback((text: string, filename: string): CampaignBrief => {
+    const parsed = filename.endsWith(".json")
+      ? (JSON.parse(text) as CampaignBrief)
+      : parseYaml(text);
+    if (!parsed.clientName || !parsed.products?.length) {
+      throw new Error("Brief must include clientName and at least one product");
+    }
+    return parsed;
+  }, []);
 
   const handleFile = useCallback((file: File) => {
     const reader = new FileReader();
     reader.onload = (e) => {
       try {
-        const text = e.target?.result as string;
-        const parsed = file.name.endsWith(".json")
-          ? (JSON.parse(text) as CampaignBrief)
-          : parseYaml(text);
-        if (!parsed.clientName || !parsed.products?.length) {
-          throw new Error("Brief must include clientName and at least 2 products");
-        }
+        const parsed = parseBriefText(e.target?.result as string, file.name);
         setBrief(parsed);
         setError(null);
         onBriefParsed(parsed);
@@ -139,7 +153,31 @@ function BriefUpload({ onBriefParsed }: { onBriefParsed: (brief: CampaignBrief) 
       }
     };
     reader.readAsText(file);
-  }, [onBriefParsed]);
+  }, [onBriefParsed, parseBriefText]);
+
+  const loadSample = useCallback(async (filename: string) => {
+    setLoadingSample(filename);
+    setError(null);
+    try {
+      const res = await fetch(`${BASE}/api/samples/${filename}`);
+      if (!res.ok) throw new Error(`Failed to load ${filename}`);
+      const text = await res.text();
+      const parsed = parseBriefText(text, filename);
+      setBrief(parsed);
+      onBriefParsed(parsed);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : String(err));
+    } finally {
+      setLoadingSample(null);
+    }
+  }, [BASE, onBriefParsed, parseBriefText]);
+
+  const SAMPLE_LABELS: Record<string, string> = {
+    "sample-jewelry.yaml": "Sterling Atelier · YAML",
+    "sample-jewelry.json": "Sterling Atelier · JSON",
+    "sample-consumer-goods.yaml": "Vitara Naturals · YAML",
+    "sample-consumer-goods.json": "Vitara Naturals · JSON",
+  };
 
   return (
     <div className="space-y-4">
@@ -158,6 +196,24 @@ function BriefUpload({ onBriefParsed }: { onBriefParsed: (brief: CampaignBrief) 
         <p className="text-slate-600 font-medium">Drop your campaign brief here</p>
         <p className="text-slate-400 text-sm mt-1">Supports YAML or JSON — click to browse</p>
       </div>
+
+      {samples.length > 0 && (
+        <div className="space-y-1.5">
+          <p className="text-xs text-slate-400 uppercase tracking-wide font-medium">Or load a sample</p>
+          <div className="grid grid-cols-2 gap-2">
+            {samples.map((s) => (
+              <button
+                key={s}
+                onClick={() => loadSample(s)}
+                disabled={loadingSample !== null}
+                className="text-left px-3 py-2 rounded-lg border border-slate-200 bg-white hover:border-slate-400 hover:bg-slate-50 transition-colors text-xs text-slate-600 font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {loadingSample === s ? "Loading…" : (SAMPLE_LABELS[s] ?? s)}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
 
       {error && (
         <div className="bg-red-50 border border-red-200 rounded-lg p-3 text-red-700 text-sm">{error}</div>

@@ -11,8 +11,37 @@ import { logStep, logStepError } from "../campaign-logger.js";
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT_DIR = path.resolve(__dirname, "../../");
 const OUTPUT_DIR = path.resolve(ROOT_DIR, "output");
+const BRIEFS_DIR = path.resolve(ROOT_DIR, "briefs");
 
 const router = Router();
+
+router.get("/samples", (_req, res) => {
+  try {
+    const files = fs.readdirSync(BRIEFS_DIR).filter((f) =>
+      f.endsWith(".yaml") || f.endsWith(".yml") || f.endsWith(".json")
+    );
+    res.json({ samples: files });
+  } catch {
+    res.json({ samples: [] });
+  }
+});
+
+router.get("/samples/:filename", (req, res) => {
+  try {
+    const filename = path.basename(req.params.filename ?? "");
+    const filePath = path.resolve(BRIEFS_DIR, filename);
+    if (!filePath.startsWith(BRIEFS_DIR) || !fs.existsSync(filePath)) {
+      res.status(404).json({ error: "Not found" });
+      return;
+    }
+    const ext = path.extname(filename).slice(1);
+    const contentType = ext === "json" ? "application/json" : "text/yaml";
+    res.setHeader("Content-Type", contentType);
+    fs.createReadStream(filePath).pipe(res);
+  } catch (err) {
+    res.status(500).json({ error: String(err) });
+  }
+});
 
 router.post("/generate", async (req, res) => {
   const runId = crypto.randomUUID();
