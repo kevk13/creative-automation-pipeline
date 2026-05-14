@@ -1,0 +1,137 @@
+{
+  "generatedAt": "2026-05-14T15:02:46.365Z",
+  "colorCompliance": [
+    {
+      "imagePath": "/home/runner/workspace/artifacts/api-server/output/test-ring/1x1/final.png",
+      "productName": "Test Ring",
+      "aspectRatio": "1x1",
+      "dominantColors": [
+        "#404040",
+        "#808080",
+        "#606060",
+        "#c0c0c0",
+        "#a0a0a0"
+      ],
+      "score": 0.9254901960784314,
+      "pass": true
+    },
+    {
+      "imagePath": "/home/runner/workspace/artifacts/api-server/output/test-ring/9x16/final.png",
+      "productName": "Test Ring",
+      "aspectRatio": "9x16",
+      "dominantColors": [
+        "#404040",
+        "#808080",
+        "#606060",
+        "#a0a0a0",
+        "#202020"
+      ],
+      "score": 0.9254901960784314,
+      "pass": true
+    },
+    {
+      "imagePath": "/home/runner/workspace/artifacts/api-server/output/test-ring/16x9/final.png",
+      "productName": "Test Ring",
+      "aspectRatio": "16x9",
+      "dominantColors": [
+        "#606060",
+        "#c0c0c0",
+        "#404040",
+        "#808080",
+        "#a0a0a0"
+      ],
+      "score": 0.9254901960784314,
+      "pass": true
+    },
+    {
+      "imagePath": "/home/runner/workspace/artifacts/api-server/output/test-bracelet/1x1/final.png",
+      "productName": "Test Bracelet",
+      "aspectRatio": "1x1",
+      "dominantColors": [
+        "#000000",
+        "#202020",
+        "#a0a0a0",
+        "#404040",
+        "#606060"
+      ],
+      "score": 0.9254901960784314,
+      "pass": true
+    },
+    {
+      "imagePath": "/home/runner/workspace/artifacts/api-server/output/test-bracelet/9x16/final.png",
+      "productName": "Test Bracelet",
+      "aspectRatio": "9x16",
+      "dominantColors": [
+        "#202020",
+        "#000000",
+        "#404040",
+        "#a0a0a0",
+        "#606060"
+      ],
+      "score": 0.9254901960784314,
+      "pass": true
+    },
+    {
+      "imagePath": "/home/runner/workspace/artifacts/api-server/output/test-bracelet/16x9/final.png",
+      "productName": "Test Bracelet",
+      "aspectRatio": "16x9",
+      "dominantColors": [
+        "#000000",
+        "#202020",
+        "#a0a0a0",
+        "#404040",
+        "#c0c0c0"
+      ],
+      "score": 0.9882352941176471,
+      "pass": true
+    }
+  ],
+  "logoCompliance": [
+    {
+      "imagePath": "/home/runner/workspace/artifacts/api-server/output/test-ring/1x1/final.png",
+      "productName": "Test Ring",
+      "aspectRatio": "1x1",
+      "logoPresent": false,
+      "reasoning": "The image shows only a simple metal ring on a gray surface with the text 'Carry your story.' at the bottom. There is no brand logo, text logo, or watermark visible in the image."
+    },
+    {
+      "imagePath": "/home/runner/workspace/artifacts/api-server/output/test-ring/9x16/final.png",
+      "productName": "Test Ring",
+      "aspectRatio": "9x16",
+      "logoPresent": false,
+      "reasoning": "The image shows only a metallic ring on a gradient background with the text 'Carry your story.' at the bottom. There is no visible brand logo, text logo, or watermark present in the image."
+    },
+    {
+      "imagePath": "/home/runner/workspace/artifacts/api-server/output/test-ring/16x9/final.png",
+      "productName": "Test Ring",
+      "aspectRatio": "16x9",
+      "logoPresent": false,
+      "reasoning": "The image shows only a simple metal ring on a gray surface with the text 'Carry your story.' at the bottom. There is no visible brand logo, text logo, or watermark present in the image."
+    },
+    {
+      "imagePath": "/home/runner/workspace/artifacts/api-server/output/test-bracelet/1x1/final.png",
+      "productName": "Test Bracelet",
+      "aspectRatio": "1x1",
+      "logoPresent": false,
+      "reasoning": "The image only contains a tagline 'Carry your story.' at the bottom, which is promotional text rather than a brand logo or watermark. There are no visible brand logos, text logos, or watermarks in the image."
+    },
+    {
+      "imagePath": "/home/runner/workspace/artifacts/api-server/output/test-bracelet/9x16/final.png",
+      "productName": "Test Bracelet",
+      "aspectRatio": "9x16",
+      "logoPresent": false,
+      "reasoning": "The image only contains a tagline 'Carry your story.' at the bottom, which is marketing text rather than a brand logo or watermark. The image shows jewelry chains on a stone surface without any visible brand logos or watermarks."
+    },
+    {
+      "imagePath": "/home/runner/workspace/artifacts/api-server/output/test-bracelet/16x9/final.png",
+      "productName": "Test Bracelet",
+      "aspectRatio": "16x9",
+      "logoPresent": false,
+      "reasoning": "The image only contains the tagline 'Carry your story.' at the bottom, which is promotional text rather than a brand logo or watermark. There are no visible brand logos, text logos, or watermarks present in the image."
+    }
+  ],
+  "legalCompliance": {
+    "passed": true,
+    "matches": []
+  }
+}

@@ -1,0 +1,59 @@
+{
+  "generatedAt": "2026-05-14T15:02:20.968Z",
+  "entries": [
+    {
+      "productName": "Test Ring",
+      "productSlug": "test-ring",
+      "aspectRatio": "1x1",
+      "filePath": "/home/runner/workspace/artifacts/api-server/output/test-ring/1x1/final.png",
+      "fileSize": 1959509,
+      "generationTimestamp": "2026-05-14T15:02:20.968Z",
+      "generationMethod": "gpt-image-1"
+    },
+    {
+      "productName": "Test Ring",
+      "productSlug": "test-ring",
+      "aspectRatio": "9x16",
+      "filePath": "/home/runner/workspace/artifacts/api-server/output/test-ring/9x16/final.png",
+      "fileSize": 3106382,
+      "generationTimestamp": "2026-05-14T15:02:20.968Z",
+      "generationMethod": "gpt-image-1"
+    },
+    {
+      "productName": "Test Ring",
+      "productSlug": "test-ring",
+      "aspectRatio": "16x9",
+      "filePath": "/home/runner/workspace/artifacts/api-server/output/test-ring/16x9/final.png",
+      "fileSize": 3293881,
+      "generationTimestamp": "2026-05-14T15:02:20.968Z",
+      "generationMethod": "gpt-image-1"
+    },
+    {
+      "productName": "Test Bracelet",
+      "productSlug": "test-bracelet",
+      "aspectRatio": "1x1",
+      "filePath": "/home/runner/workspace/artifacts/api-server/output/test-bracelet/1x1/final.png",
+      "fileSize": 2226453,
+      "generationTimestamp": "2026-05-14T15:02:20.968Z",
+      "generationMethod": "gpt-image-1"
+    },
+    {
+      "productName": "Test Bracelet",
+      "productSlug": "test-bracelet",
+      "aspectRatio": "9x16",
+      "filePath": "/home/runner/workspace/artifacts/api-server/output/test-bracelet/9x16/final.png",
+      "fileSize": 3532288,
+      "generationTimestamp": "2026-05-14T15:02:20.968Z",
+      "generationMethod": "gpt-image-1"
+    },
+    {
+      "productName": "Test Bracelet",
+      "productSlug": "test-bracelet",
+      "aspectRatio": "16x9",
+      "filePath": "/home/runner/workspace/artifacts/api-server/output/test-bracelet/16x9/final.png",
+      "fileSize": 3778389,
+      "generationTimestamp": "2026-05-14T15:02:20.968Z",
+      "generationMethod": "gpt-image-1"
+    }
+  ]
+}
