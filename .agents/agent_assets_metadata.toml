@@ -1,0 +1,26 @@
+uploads = []
+generated = []
+
+[[outputs]]
+id = "4bN3xAJKGKUUExs8vARTK"
+uri = "file://artifacts/api-server/briefs/sample-consumer-goods.yaml"
+type = "unspecified"
+title = "Vitara Naturals — YAML"
+
+[[outputs]]
+id = "KjMG73aLb7LhqJbAj2mEM"
+uri = "file://artifacts/api-server/briefs/sample-consumer-goods.json"
+type = "unspecified"
+title = "Vitara Naturals — JSON"
+
+[[outputs]]
+id = "sxa87YH9ZH0kXlOXUJdPL"
+uri = "file://artifacts/api-server/briefs/sample-jewelry.yaml"
+type = "unspecified"
+title = "Sterling Atelier — YAML"
+
+[[outputs]]
+id = "cTlicmPhr1QODaBTfhzyC"
+uri = "file://artifacts/api-server/briefs/sample-jewelry.json"
+type = "unspecified"
+title = "Sterling Atelier — JSON"
