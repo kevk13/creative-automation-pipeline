@@ -1,133 +1,133 @@
 {
-  "generatedAt": "2026-05-14T15:02:46.365Z",
+  "generatedAt": "2026-05-14T17:25:25.580Z",
   "colorCompliance": [
     {
-      "imagePath": "/home/runner/workspace/artifacts/api-server/output/test-ring/1x1/final.png",
-      "productName": "Test Ring",
+      "imagePath": "/home/runner/workspace/artifacts/api-server/output/a/1x1/final.png",
+      "productName": "A",
       "aspectRatio": "1x1",
       "dominantColors": [
-        "#404040",
-        "#808080",
+        "#e0e0c0",
+        "#e0c0c0",
         "#606060",
-        "#c0c0c0",
-        "#a0a0a0"
+        "#404040",
+        "#c0c0a0"
       ],
-      "score": 0.9254901960784314,
-      "pass": true
+      "score": 0,
+      "pass": false
     },
     {
-      "imagePath": "/home/runner/workspace/artifacts/api-server/output/test-ring/9x16/final.png",
-      "productName": "Test Ring",
+      "imagePath": "/home/runner/workspace/artifacts/api-server/output/a/9x16/final.png",
+      "productName": "A",
       "aspectRatio": "9x16",
       "dominantColors": [
-        "#404040",
-        "#808080",
+        "#e0e0c0",
         "#606060",
-        "#a0a0a0",
-        "#202020"
+        "#404040",
+        "#e0c0c0",
+        "#606040"
       ],
-      "score": 0.9254901960784314,
-      "pass": true
+      "score": 0,
+      "pass": false
     },
     {
-      "imagePath": "/home/runner/workspace/artifacts/api-server/output/test-ring/16x9/final.png",
-      "productName": "Test Ring",
+      "imagePath": "/home/runner/workspace/artifacts/api-server/output/a/16x9/final.png",
+      "productName": "A",
       "aspectRatio": "16x9",
       "dominantColors": [
-        "#606060",
-        "#c0c0c0",
         "#404040",
-        "#808080",
-        "#a0a0a0"
+        "#202020",
+        "#e0e0c0",
+        "#c0a080",
+        "#c0c0a0"
       ],
-      "score": 0.9254901960784314,
-      "pass": true
+      "score": 0,
+      "pass": false
     },
     {
-      "imagePath": "/home/runner/workspace/artifacts/api-server/output/test-bracelet/1x1/final.png",
-      "productName": "Test Bracelet",
+      "imagePath": "/home/runner/workspace/artifacts/api-server/output/b/1x1/final.png",
+      "productName": "B",
       "aspectRatio": "1x1",
       "dominantColors": [
-        "#000000",
-        "#202020",
-        "#a0a0a0",
-        "#404040",
-        "#606060"
+        "#606040",
+        "#806060",
+        "#a08060",
+        "#c0a0a0",
+        "#a0a080"
       ],
-      "score": 0.9254901960784314,
-      "pass": true
+      "score": 0,
+      "pass": false
     },
     {
-      "imagePath": "/home/runner/workspace/artifacts/api-server/output/test-bracelet/9x16/final.png",
-      "productName": "Test Bracelet",
+      "imagePath": "/home/runner/workspace/artifacts/api-server/output/b/9x16/final.png",
+      "productName": "B",
       "aspectRatio": "9x16",
       "dominantColors": [
-        "#202020",
-        "#000000",
-        "#404040",
-        "#a0a0a0",
-        "#606060"
+        "#806060",
+        "#808060",
+        "#a08060",
+        "#e0e0e0",
+        "#604040"
       ],
-      "score": 0.9254901960784314,
-      "pass": true
+      "score": 0,
+      "pass": false
     },
     {
-      "imagePath": "/home/runner/workspace/artifacts/api-server/output/test-bracelet/16x9/final.png",
-      "productName": "Test Bracelet",
+      "imagePath": "/home/runner/workspace/artifacts/api-server/output/b/16x9/final.png",
+      "productName": "B",
       "aspectRatio": "16x9",
       "dominantColors": [
-        "#000000",
-        "#202020",
-        "#a0a0a0",
-        "#404040",
-        "#c0c0c0"
+        "#c0a0a0",
+        "#404020",
+        "#808060",
+        "#a0a080",
+        "#a08080"
       ],
-      "score": 0.9882352941176471,
-      "pass": true
+      "score": 0,
+      "pass": false
     }
   ],
   "logoCompliance": [
     {
-      "imagePath": "/home/runner/workspace/artifacts/api-server/output/test-ring/1x1/final.png",
-      "productName": "Test Ring",
+      "imagePath": "/home/runner/workspace/artifacts/api-server/output/a/1x1/final.png",
+      "productName": "A",
       "aspectRatio": "1x1",
-      "logoPresent": false,
-      "reasoning": "The image shows only a simple metal ring on a gray surface with the text 'Carry your story.' at the bottom. There is no brand logo, text logo, or watermark visible in the image."
+      "logoPresent": true,
+      "reasoning": "The brand name 'acme' is visible on the right ear cup of the headphones, and 'Hello world' text appears at the bottom of the image as a watermark or text overlay."
     },
     {
-      "imagePath": "/home/runner/workspace/artifacts/api-server/output/test-ring/9x16/final.png",
-      "productName": "Test Ring",
+      "imagePath": "/home/runner/workspace/artifacts/api-server/output/a/9x16/final.png",
+      "productName": "A",
       "aspectRatio": "9x16",
-      "logoPresent": false,
-      "reasoning": "The image shows only a metallic ring on a gradient background with the text 'Carry your story.' at the bottom. There is no visible brand logo, text logo, or watermark present in the image."
+      "logoPresent": true,
+      "reasoning": "The ACME brand logo is visible on the right ear cup of the headphones, and there is 'Hello world' text at the bottom of the image."
     },
     {
-      "imagePath": "/home/runner/workspace/artifacts/api-server/output/test-ring/16x9/final.png",
-      "productName": "Test Ring",
+      "imagePath": "/home/runner/workspace/artifacts/api-server/output/a/16x9/final.png",
+      "productName": "A",
       "aspectRatio": "16x9",
-      "logoPresent": false,
-      "reasoning": "The image shows only a simple metal ring on a gray surface with the text 'Carry your story.' at the bottom. There is no visible brand logo, text logo, or watermark present in the image."
+      "logoPresent": true,
+      "reasoning": "There is text visible on the right ear cup that appears to say 'ACME' which serves as a brand logo/identifier on the headphones"
     },
     {
-      "imagePath": "/home/runner/workspace/artifacts/api-server/output/test-bracelet/1x1/final.png",
-      "productName": "Test Bracelet",
+      "imagePath": "/home/runner/workspace/artifacts/api-server/output/b/1x1/final.png",
+      "productName": "B",
       "aspectRatio": "1x1",
-      "logoPresent": false,
-      "reasoning": "The image only contains a tagline 'Carry your story.' at the bottom, which is promotional text rather than a brand logo or watermark. There are no visible brand logos, text logos, or watermarks in the image."
+      "logoPresent": true,
+      "reasoning": "The product container has 'ACME' embossed on the brown cap and 'B' marked on the golden/beige body of the bottle, which are brand identifiers/logos."
     },
     {
-      "imagePath": "/home/runner/workspace/artifacts/api-server/output/test-bracelet/9x16/final.png",
-      "productName": "Test Bracelet",
+      "imagePath": "/home/runner/workspace/artifacts/api-server/output/b/9x16/final.png",
+      "productName": "B",
       "aspectRatio": "9x16",
-      "logoPresent": false,
-      "reasoning": "The image only contains a tagline 'Carry your story.' at the bottom, which is marketing text rather than a brand logo or watermark. The image shows jewelry chains on a stone surface without any visible brand logos or watermarks."
+      "logoPresent": true,
+      "reasoning": "The text 'AGME' is embossed on the wooden-colored lid of the container, and the letter 'B' is embossed on the beige/tan body of the container. These are brand identifiers/logos visible on the product."
     },
     {
-      "imagePath": "/home/runner/workspace/artifacts/api-server/output/test-bracelet/16x9/final.png",
-      "productName": "Test Bracelet",
+      "imagePath": "/home/runner/workspace/artifacts/api-server/output/b/16x9/final.png",
+      "productName": "B",
       "aspectRatio": "16x9",
-      "logoPresent": false,
-      "reasoning": "The image only contains the tagline 'Carry your story.' at the bottom, which is promotional text rather than a brand logo or watermark. There are no visible brand logos, text logos, or watermarks present in the image."
+      "logoPresent": true,
+      "reasoning": "The text 'ACME' is embossed on the wooden cap of the product container, and 'B' appears on the glass/plastic jar below it. These are brand identifiers/logos on the product packaging."
     }
   ],
   "legalCompliance": {
