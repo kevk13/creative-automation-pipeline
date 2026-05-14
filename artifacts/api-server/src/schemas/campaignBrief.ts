@@ -14,6 +14,7 @@ export const CampaignBriefSchema = z.object({
   campaignMessage: z.string().min(1),
   brandPalette: z.array(z.string()).optional(),
   prohibitedWords: z.array(z.string()).optional(),
+  logoPath: z.string().optional(),
 });
 
 export type Product = z.infer<typeof ProductSchema>;
