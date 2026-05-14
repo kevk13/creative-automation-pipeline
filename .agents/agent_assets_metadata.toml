@@ -24,3 +24,9 @@ id = "cTlicmPhr1QODaBTfhzyC"
 uri = "file://artifacts/api-server/briefs/sample-jewelry.json"
 type = "unspecified"
 title = "Sterling Atelier — JSON"
+
+[[outputs]]
+id = "9U6tLH2I6bUDVu8I-Zn_U"
+uri = "file://exports/technical-brief.md"
+type = "text"
+title = "Creative Automation Pipeline — Technical Brief"
