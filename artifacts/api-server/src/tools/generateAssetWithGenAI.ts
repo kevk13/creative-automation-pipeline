@@ -86,7 +86,9 @@ Return ONLY the image generation prompt, nothing else.`,
     model: IMAGE_MODEL,
   });
 
-  const imageData = imageResponse.data[0];
+  const imageData = imageResponse.data?.[0];
+  if (!imageData) throw new Error("No image data returned from OpenAI");
+
   let imageBuffer: Buffer;
 
   if (imageData.b64_json) {
