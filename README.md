@@ -415,6 +415,7 @@ jq 'select(.adapter == "dropbox")' logs/run-*.json
 
 ## Assumptions and Limitations
 
+- **Variation scope**: The PDF objective describes generating "variations for campaign assets." This POC interprets variations as the combination of multi-product output and multi-aspect-ratio output, producing six final creatives for a two-product campaign (2 products x 3 aspect ratios). A broader interpretation - multiple distinct creative concepts per product for A/B testing - is supported architecturally via a `variantsPerProduct` parameter on the brief schema. The AssetGatherer step is single-iteration today; making it N-iteration is an additive change with no downstream restructuring required. Per-region localization of the campaign message is similarly architecture-ready via a `translateStep` after `loadBrief`, using the existing `targetRegion` field. Both are scope-out decisions for the 2-3 hour POC window, not architectural limitations.
 - **Scope**: Deliberate 2-3 hour POC. Architecture is production-faithful; infrastructure is not.
 - **Concurrent runs**: All runs write to the same `output/` directory. The last run wins. Production requires run-scoped output paths.
 - **Compliance checks**: Advisory, not blocking. Color match threshold (>=30%) is a starting point. Logo detection relies on Claude vision and is non-deterministic.
