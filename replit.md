@@ -13,14 +13,14 @@ A production-grade creative automation pipeline for social ad campaigns. Upload 
 ## Stack
 
 - pnpm workspaces, Node.js 24, TypeScript 5.9
-- API: Express 5 with Server-Sent Events (SSE) for real-time pipeline progress
-- AI: Anthropic claude-sonnet-4-5 (text + vision), OpenAI gpt-image-1 (image generation)
+- API: Express 5; background pipeline execution with polling for real-time progress
+- AI: Anthropic claude-sonnet-4-5 (text + vision), Google Gemini gemini-2.5-flash-image (image generation)
 - Image processing: Sharp (resize, composite SVG overlays)
 - Workflow: Custom Mastra-compatible `createStep`/`createWorkflow` runner (`src/workflow/mastra-compat.ts`)
 - Brief format: YAML/JSON parsed by `js-yaml`
 - Logging: Pino (structured JSON, dual file+console, cost tracking per AI call)
 - Validation: Zod at every workflow step boundary
-- Frontend: Vite + React 19 + Tailwind v4, React Query, SSE streaming
+- Frontend: Vite + React 19 + Tailwind v4, React Query, 750 ms polling for step progress
 - API codegen: Orval (from OpenAPI spec → React Query hooks + Zod schemas)
 - Build: esbuild (ESM bundle) / tsx watch (dev)
 - No database — file-based storage with JSON manifests
@@ -42,9 +42,10 @@ A production-grade creative automation pipeline for social ad campaigns. Upload 
 ## Architecture decisions
 
 - **Mastra-compatible workflow**: `mastra-compat.ts` implements `createStep`/`createWorkflow` matching `@mastra/core/workflows` API exactly. Swap the import to use real Mastra with zero code changes.
-- **SSE over WebSocket**: Six workflow steps emit progress via EventEmitter → Express SSE. Simpler than WebSockets, debuggable with `curl -N`, works through all proxy layers.
+- **Polling over SSE**: `POST /api/generate` returns `{runId}` immediately and runs the pipeline in a background async IIFE. The frontend polls `GET /api/run/:runId/status` every 750 ms. SSE was the original design but the Replit reverse proxy buffers all SSE chunks until the response closes, making streaming impossible without polling.
+- **In-memory run store**: `src/lib/runStore.ts` holds a `Map<runId, RunState>` with a 1-hour TTL. Steps, current message, and final results are updated via `progressBus` events.
 - **File-based storage**: `manifest.json` and `compliance.json` are portable artifacts. No DB needed for the POC; the schema maps directly to Postgres tables.
-- **Dual AI client setup**: `src/lib/ai-clients.ts` checks `AI_INTEGRATIONS_*` env vars first (Replit), falls back to `ANTHROPIC_API_KEY`/`OPENAI_API_KEY` (local). Identical behavior either way.
+- **Dual AI client setup**: `src/lib/ai-clients.ts` checks `AI_INTEGRATIONS_ANTHROPIC_*` env vars first (Replit), falls back to `ANTHROPIC_API_KEY` (local). Image generation uses the Replit-managed Gemini integration (`@workspace/integrations-gemini-ai/image`).
 - **Pino cost logging**: Every AI call logs `inputTokens`, `outputTokens`, and `costUSD`. Critical for per-client cost attribution at scale.
 - **tsx for dev, esbuild for prod**: tsx watch avoids esbuild bundling issues with Mastra/AI SDKs during development. Production uses esbuild with heavy packages externalized.
 
@@ -52,7 +53,7 @@ A production-grade creative automation pipeline for social ad campaigns. Upload 
 
 The pipeline accepts a YAML/JSON campaign brief describing a client, products, target audience, campaign message, brand palette, and prohibited words. It then:
 1. Loads and validates the brief
-2. Generates or retrieves product images (AI-generated via Claude + OpenAI, or local file)
+2. Generates or retrieves product images (Claude crafts the prompt, Gemini gemini-2.5-flash-image generates the image, or a local file is used)
 3. Renders each image in three aspect ratios (1:1, 9:16, 16:9) using Sharp
 4. Composites the campaign message as an SVG overlay on each image
 5. Organizes outputs and writes `manifest.json`
@@ -62,7 +63,7 @@ Results are surfaced in a React gallery with download links and a compliance rep
 
 ## User preferences
 
-- Stack is locked: TypeScript, Mastra-compatible workflows, Anthropic claude-sonnet-4-5, OpenAI gpt-image-1, Sharp, Express, Vite+React+Tailwind, Pino, Zod, js-yaml
+- Stack is locked: TypeScript, Mastra-compatible workflows, Anthropic claude-sonnet-4-5, Gemini gemini-2.5-flash-image, Sharp, Express, Vite+React+Tailwind, Pino, Zod, js-yaml
 - No database — file-based storage only
 - Single-page frontend
 
@@ -72,7 +73,7 @@ Results are surfaced in a React gallery with download links and a compliance rep
 - **Sharp needs onlyBuiltDependencies entry**: Already in pnpm-workspace.yaml. If pnpm warns about ignored build scripts, that entry is the fix.
 - **Codegen after spec changes**: Always run `pnpm --filter @workspace/api-spec run codegen` after editing `lib/api-spec/openapi.yaml`. The typecheck:libs step runs automatically as part of codegen.
 - **Output directory**: All generated files go to `artifacts/api-server/output/`. Concurrent pipeline runs overwrite each other. Production needs run-scoped output directories.
-- **SSE + Replit proxy**: The SSE stream uses `res.flushHeaders()` and `X-Accel-Buffering: no` to prevent buffering through the proxy.
+- **Run store is in-memory**: Restarting the API server loses all in-flight run states. In-progress poll requests will receive 404 after a restart.
 
 ## Pointers
 

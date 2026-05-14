@@ -59,7 +59,7 @@ manifest.json + compliance.json + final.png × (products × ratios)
 
 **Strict tool contracts**: Agents operate through explicit tools (`checkLocalAsset`, `generateAssetWithGenAI`, `extractColors`, `checkLogoPresence`). Each tool has a typed interface and handles its own error cases.
 
-**Event-driven orchestration**: The workflow emits progress events via an internal `ProgressBus` (EventEmitter). The Express route subscribes to these events and streams them as Server-Sent Events to the frontend, providing real-time step-by-step visibility without polling.
+**Polling-based progress**: The workflow emits progress events via an internal `ProgressBus` (EventEmitter) that updates an in-memory `RunState`. `POST /api/generate` returns `{runId}` immediately; the frontend polls `GET /api/run/:runId/status` every 750 ms for real-time step visibility. SSE was the original design but the Replit reverse proxy buffers all chunks until the response closes, making true streaming impossible through the proxy.
 
 **Why Mastra-compatible instead of `@mastra/core` directly**: This POC implements the `createStep`/`createWorkflow` API pattern from Mastra's workflow spec. The implementation is intentionally drop-in compatible — swapping the import from `./workflow/mastra-compat` to `@mastra/core/workflows` requires zero changes to step or workflow definitions. This avoids bundling complexity in a POC context while faithfully demonstrating the architectural pattern.
 
@@ -72,11 +72,11 @@ manifest.json + compliance.json + final.png × (products × ratios)
 | **TypeScript** | End-to-end type safety from brief schema to manifest. Zod schemas at every step boundary mean runtime validation matches compile-time types. |
 | **Mastra-compatible workflow** | Declarative step chaining with Zod input/output schemas per step. Observability is built-in: each step emits structured events. Hand-rolled orchestration would need all of this re-implemented. |
 | **Anthropic claude-sonnet-4-5** | Best-in-class instruction following for prompt crafting and vision tasks. The compliance agent needs reliable JSON extraction from vision responses. |
-| **OpenAI gpt-image-1 / DALL-E 3** | State-of-the-art photorealistic image generation. Architecture supports Adobe Firefly swap via single tool replacement in `generateAssetWithGenAI.ts`. |
+| **Google Gemini gemini-2.5-flash-image** | Fast, high-quality image generation. Claude crafts the prompt; Gemini generates the image. Architecture supports Adobe Firefly swap via single tool replacement in `generateAssetWithGenAI.ts`. |
 | **Sharp** | Native Node.js image processing — 5-10× faster than Canvas, handles large images without memory issues, excellent resize quality with cover/contain modes. |
 | **File-based storage** | Zero infrastructure for a POC. `manifest.json` and `compliance.json` are queryable and portable. Production path is Postgres + S3/R2 for campaign history and asset storage. |
 | **Pino** | Structured JSON logging with file + console transports. Every AI call logs tokens, cost, and duration — essential for diagnosing production issues at scale. |
-| **Express + SSE** | SSE over plain HTTP keeps the pipeline observable without WebSocket complexity. Each workflow step publishes to a ProgressBus; the route streams events to the frontend. |
+| **Express + polling** | `POST /api/generate` returns immediately; clients poll `GET /api/run/:runId/status`. Simple, debuggable with curl, and proxy-safe — SSE was dropped because the Replit reverse proxy cannot stream chunked responses. |
 
 ---
 
@@ -86,7 +86,8 @@ manifest.json + compliance.json + final.png × (products × ratios)
 
 - Node.js 20+
 - pnpm 9+
-- API keys for Anthropic and OpenAI
+- Anthropic API key (for text + vision calls)
+- Google Gemini access (via Replit AI Integrations, or a `GEMINI_API_KEY` directly)
 
 ### Installation
 
@@ -109,20 +110,19 @@ Create `artifacts/api-server/.env` (or set in your shell):
 ```env
 # Required when running locally (outside Replit)
 ANTHROPIC_API_KEY=sk-ant-...
-OPENAI_API_KEY=sk-...
 
 # Set by Replit AI Integrations automatically — no action needed on Replit
 # AI_INTEGRATIONS_ANTHROPIC_BASE_URL=...
 # AI_INTEGRATIONS_ANTHROPIC_API_KEY=...
-# AI_INTEGRATIONS_OPENAI_BASE_URL=...
-# AI_INTEGRATIONS_OPENAI_API_KEY=...
+# AI_INTEGRATIONS_GEMINI_BASE_URL=...
+# AI_INTEGRATIONS_GEMINI_API_KEY=...
 
 PORT=5000
 ```
 
-> **Running on Replit**: No API keys needed. The Replit AI Integrations proxy is configured automatically. Charges are billed to your Replit credits.
+> **Running on Replit**: No API keys needed. The Replit AI Integrations proxy is configured automatically for both Anthropic and Gemini. Charges are billed to your Replit credits.
 
-> **Running locally (for Adobe reviewers)**: Set `ANTHROPIC_API_KEY` and `OPENAI_API_KEY` in the `.env` file above. The server validates both keys on startup and exits with a clear error if either is missing.
+> **Running locally**: Set `ANTHROPIC_API_KEY` in the `.env` file above. Image generation uses the Replit-managed Gemini integration and is not currently available outside of Replit without additional configuration.
 
 ### Run
 
@@ -142,7 +142,7 @@ pnpm --filter @workspace/frontend run dev
 2. Drag and drop `artifacts/api-server/briefs/sample-jewelry.yaml` onto the upload area
 3. Review the brief preview (client name, products, campaign message, palette)
 4. Click **Run Pipeline**
-5. Watch step-by-step progress via the SSE stream
+5. Watch step-by-step progress update in real time (polled every 750 ms)
 6. Browse the Results Gallery — three aspect ratios per product, compliance report below
 
 ### Output Structure
@@ -196,7 +196,7 @@ prohibitedWords: [free, guaranteed, miracle, cure]
 
 3. **Mastra-compatible workflow over hand-rolled orchestration**: The `createStep`/`createWorkflow` pattern enforces Zod schemas at every step boundary and makes the execution graph explicit. Adding a new step (e.g., translation, A/B variant generation) is a single `.then(newStep)` call.
 
-4. **Real image generation, not placeholders**: Every run produces actual AI-generated product images via OpenAI's image API. The architecture supports swapping to Adobe Firefly with a single function replacement in `src/tools/generateAssetWithGenAI.ts` — change the `openai.images.generate` call to the Firefly API endpoint.
+4. **Real image generation, not placeholders**: Every run produces actual AI-generated product images. Claude `claude-sonnet-4-5` writes the image prompt; Gemini `gemini-2.5-flash-image` generates the image. The architecture supports swapping to Adobe Firefly with a single function replacement in `src/tools/generateAssetWithGenAI.ts`.
 
 5. **Structured logging with cost tracking from day one**: Every Anthropic call logs `inputTokens`, `outputTokens`, and `costUSD`. Every image generation logs `imageCount` and `costUSD`. All logs are queryable JSON in `logs/run-{timestamp}.json`. This is how an FDE diagnoses: "Why did this campaign run cost $4.20 instead of $0.80?"
 
@@ -209,19 +209,19 @@ Every AI call is logged with:
 ```json
 {
   "level": 30,
-  "time": "2025-01-15T10:23:45.123Z",
+  "time": "2026-05-14T10:23:45.123Z",
   "step": "generateAssetWithGenAI",
   "msg": "Image generated",
   "product": "Sterling Silver Moonstone Necklace",
   "imageCount": 1,
-  "costUSD": 0.04,
-  "model": "gpt-image-1"
+  "costUSD": 0,
+  "model": "gemini-2.5-flash-image"
 }
 ```
 
 Cost model:
 - Claude claude-sonnet-4-5: $3.00 / 1M input tokens, $15.00 / 1M output tokens
-- gpt-image-1 / DALL-E 3: $0.040 per 1024×1024 image
+- Gemini gemini-2.5-flash-image: cost not returned by the Replit-managed integration; logged as $0
 
 Logs are structured JSON and can be queried with `jq`, shipped to Datadog/CloudWatch, or aggregated into a cost dashboard. At scale (hundreds of campaigns/day), this log structure is how you build per-client cost attribution and pipeline performance dashboards.
 
@@ -249,4 +249,4 @@ To move this from POC to production:
 - **Compliance**: Checks are advisory, not blocking. Color match threshold (≥30%) is a starting point, not a production value.
 - **No persistence**: Everything lives on the filesystem. Concurrent runs will overwrite `output/`. Production requires run-scoped output directories.
 - **Single-user**: No auth, no tenant isolation, no rate limiting.
-- **Image model**: `gpt-image-1` used on Replit (via AI Integrations proxy); DALL-E 3 used with direct API key. Both produce equivalent quality. Adobe Firefly is the production target — swap is one function replacement.
+- **Image model**: `gemini-2.5-flash-image` via the Replit-managed Gemini integration. Adobe Firefly is the production target — swap is one function replacement in `generateAssetWithGenAI.ts`.
