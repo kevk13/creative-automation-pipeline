@@ -1,11 +1,7 @@
 import pino from "pino";
 import fs from "fs";
 import path from "path";
-import { fileURLToPath } from "url";
-
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const ROOT_DIR = path.resolve(__dirname, "..");
-const LOGS_DIR = path.resolve(ROOT_DIR, "logs");
+import { LOGS_DIR } from "./lib/paths.js";
 
 fs.mkdirSync(LOGS_DIR, { recursive: true });
 

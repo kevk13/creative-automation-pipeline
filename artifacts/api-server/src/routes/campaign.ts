@@ -1,17 +1,12 @@
 import { Router } from "express";
 import fs from "fs";
 import path from "path";
-import { fileURLToPath } from "url";
 import crypto from "crypto";
 import { campaignWorkflow } from "../workflow/campaignWorkflow.js";
 import { CampaignBriefSchema } from "../schemas/campaignBrief.js";
 import { progressBus, type ProgressEvent } from "../progress-bus.js";
 import { logStep, logStepError } from "../campaign-logger.js";
-
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const ROOT_DIR = path.resolve(__dirname, "../../");
-const OUTPUT_DIR = path.resolve(ROOT_DIR, "output");
-const BRIEFS_DIR = path.resolve(ROOT_DIR, "briefs");
+import { OUTPUT_DIR, BRIEFS_DIR } from "../lib/paths.js";
 
 const router = Router();
 

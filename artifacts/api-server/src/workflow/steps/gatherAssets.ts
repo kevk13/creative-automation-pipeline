@@ -1,14 +1,10 @@
-import path from "path";
-import { fileURLToPath } from "url";
 import { z } from "zod";
 import { createStep } from "../mastra-compat.js";
 import { CampaignBriefSchema } from "../../schemas/campaignBrief.js";
 import { runAssetGathererAgent } from "../../agents/assetGatherer.js";
 import { logStep, logStepError } from "../../campaign-logger.js";
 import { emitProgress } from "../../progress-bus.js";
-
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const ROOT_DIR = path.resolve(__dirname, "../../..");
+import { OUTPUT_DIR } from "../../lib/paths.js";
 
 const GatherAssetsInputSchema = z.object({
   runId: z.string(),
@@ -29,7 +25,7 @@ export const gatherAssetsStep = createStep({
   outputSchema: GatherAssetsOutputSchema,
   async execute({ inputData }) {
     const { runId, brief } = inputData;
-    const outputDir = path.resolve(ROOT_DIR, "output");
+    const outputDir = OUTPUT_DIR;
 
     emitProgress({ runId, step: "gatherAssets", status: "running", message: `Generating assets for ${brief.products.length} products...` });
 
