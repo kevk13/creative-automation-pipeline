@@ -138,4 +138,26 @@ router.get("/output/:productSlug/:ratio/final.png", (req, res) => {
   }
 });
 
+router.post("/upload-logo", (req, res) => {
+  try {
+    const { data } = req.body as { data?: string };
+    if (!data) {
+      res.status(400).json({ error: "Missing base64 image data" });
+      return;
+    }
+
+    const logoDir = path.resolve(OUTPUT_DIR, "logos");
+    fs.mkdirSync(logoDir, { recursive: true });
+    const logoPath = path.resolve(logoDir, "logo.png");
+
+    const base64 = data.replace(/^data:image\/\w+;base64,/, "");
+    fs.writeFileSync(logoPath, Buffer.from(base64, "base64"));
+
+    logStep("upload-logo", "Logo saved", { path: logoPath });
+    res.json({ logoPath });
+  } catch (err) {
+    res.status(500).json({ error: String(err) });
+  }
+});
+
 export default router;

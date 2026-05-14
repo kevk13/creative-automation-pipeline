@@ -16,3 +16,5 @@ prohibitedWords:
   - guaranteed
   - miracle
   - cure
+# Optional: path to a PNG logo file on the server (absolute or relative to api-server/)
+# logoPath: "./assets/logo.png"
