@@ -49,6 +49,7 @@ router.post("/generate", async (req, res) => {
 
   const send = (data: object) => {
     res.write(`data: ${JSON.stringify(data)}\n\n`);
+    if (typeof (res as any).flush === "function") (res as any).flush();
   };
 
   const progressHandler = (event: ProgressEvent) => {

@@ -48,6 +48,8 @@ const STEP_LABELS: Record<string, string> = {
   checkCompliance: "Running compliance checks",
 };
 
+const ALL_STEPS = Object.keys(STEP_LABELS);
+
 function parseYaml(text: string): CampaignBrief {
   const lines = text.split("\n");
   const result: Record<string, unknown> = {};
@@ -437,7 +439,7 @@ function ResultsGallery({ manifest, complianceReport }: { manifest: any; complia
       {complianceReport && (
         <div className="border border-slate-200 rounded-lg p-6 space-y-5">
           <h3 className="text-lg font-semibold text-slate-800">Compliance Report</h3>
-          <div className="grid grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div className="bg-slate-50 rounded-lg p-4">
               <div className="text-sm font-medium text-slate-600 mb-2">Color Compliance</div>
               <div className="space-y-1">
@@ -504,8 +506,8 @@ export default function App() {
   const [manifest, setManifest] = useState<any>(null);
   const [complianceReport, setComplianceReport] = useState<any>(null);
 
-  const { refetch: refetchManifest } = useGetManifest({ query: { enabled: false } });
-  const { refetch: refetchCompliance } = useGetCompliance({ query: { enabled: false } });
+  const { refetch: refetchManifest } = useGetManifest({ query: { enabled: false, queryKey: ["manifest"] } });
+  const { refetch: refetchCompliance } = useGetCompliance({ query: { enabled: false, queryKey: ["compliance"] } });
 
   const BASE = import.meta.env.BASE_URL.replace(/\/$/, "");
 
@@ -550,6 +552,7 @@ export default function App() {
               }
               if (event.message) setCurrentMessage(event.message);
             } else if (event.type === "complete") {
+              setSteps(() => Object.fromEntries(ALL_STEPS.map((s) => [s, "complete" as const])));
               setManifest(event.manifest);
               setComplianceReport(event.complianceReport);
               setStatus("done");
