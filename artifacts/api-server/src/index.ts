@@ -1,4 +1,6 @@
-import "dotenv/config";
+import dotenv from "dotenv";
+dotenv.config({ path: "../../.env" });
+dotenv.config();
 import { validateAiClients } from "./lib/ai-clients.js";
 import app from "./app.js";
 import { logger } from "./lib/logger.js";
