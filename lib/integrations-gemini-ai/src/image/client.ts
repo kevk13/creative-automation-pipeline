@@ -1,23 +1,25 @@
 import { GoogleGenAI, Modality } from "@google/genai";
 
-if (!process.env.AI_INTEGRATIONS_GEMINI_BASE_URL) {
-  throw new Error(
-    "AI_INTEGRATIONS_GEMINI_BASE_URL must be set. Did you forget to provision the Gemini AI integration?",
-  );
-}
+const apiKey =
+  process.env.AI_INTEGRATIONS_GEMINI_API_KEY ||
+  process.env.GEMINI_API_KEY;
 
-if (!process.env.AI_INTEGRATIONS_GEMINI_API_KEY) {
+const baseUrl = process.env.AI_INTEGRATIONS_GEMINI_BASE_URL;
+
+if (!apiKey) {
   throw new Error(
-    "AI_INTEGRATIONS_GEMINI_API_KEY must be set. Did you forget to provision the Gemini AI integration?",
+    "Gemini API key not configured.\n" +
+      "  On Replit: enable the Gemini AI Integration in the integrations panel.\n" +
+      "  Locally: set GEMINI_API_KEY in your .env file.\n" +
+      "  Get a key at https://aistudio.google.com/app/apikey"
   );
 }
 
 export const ai = new GoogleGenAI({
-  apiKey: process.env.AI_INTEGRATIONS_GEMINI_API_KEY,
-  httpOptions: {
-    apiVersion: "",
-    baseUrl: process.env.AI_INTEGRATIONS_GEMINI_BASE_URL,
-  },
+  apiKey,
+  ...(baseUrl
+    ? { httpOptions: { apiVersion: "", baseUrl } }
+    : {}),
 });
 
 export async function generateImage(

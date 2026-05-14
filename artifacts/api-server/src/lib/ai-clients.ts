@@ -1,5 +1,4 @@
 import Anthropic from "@anthropic-ai/sdk";
-import OpenAI from "openai";
 
 function getAnthropicApiKey(): string {
   return (
@@ -13,18 +12,6 @@ function getAnthropicBaseUrl(): string | undefined {
   return process.env["AI_INTEGRATIONS_ANTHROPIC_BASE_URL"] || undefined;
 }
 
-function getOpenAIApiKey(): string {
-  return (
-    process.env["AI_INTEGRATIONS_OPENAI_API_KEY"] ||
-    process.env["OPENAI_API_KEY"] ||
-    "not-configured"
-  );
-}
-
-function getOpenAIBaseUrl(): string | undefined {
-  return process.env["AI_INTEGRATIONS_OPENAI_BASE_URL"] || undefined;
-}
-
 export function createAnthropicClient(): Anthropic {
   const baseURL = getAnthropicBaseUrl();
   return new Anthropic({
@@ -33,27 +20,34 @@ export function createAnthropicClient(): Anthropic {
   });
 }
 
-export function createOpenAIClient(): OpenAI {
-  const baseURL = getOpenAIBaseUrl();
-  return new OpenAI({
-    apiKey: getOpenAIApiKey(),
-    ...(baseURL ? { baseURL } : {}),
-  });
-}
-
 export function validateAiClients(): void {
-  const hasIntegrations =
+  const hasAnthropicIntegration =
     process.env["AI_INTEGRATIONS_ANTHROPIC_BASE_URL"] &&
-    process.env["AI_INTEGRATIONS_OPENAI_BASE_URL"];
+    process.env["AI_INTEGRATIONS_ANTHROPIC_API_KEY"];
 
-  const hasDirectKeys =
-    process.env["ANTHROPIC_API_KEY"] && process.env["OPENAI_API_KEY"];
+  const hasAnthropicKey = !!process.env["ANTHROPIC_API_KEY"];
 
-  if (!hasIntegrations && !hasDirectKeys) {
+  const hasGeminiIntegration =
+    process.env["AI_INTEGRATIONS_GEMINI_BASE_URL"] &&
+    process.env["AI_INTEGRATIONS_GEMINI_API_KEY"];
+
+  const hasGeminiKey = !!process.env["GEMINI_API_KEY"];
+
+  if (!hasAnthropicIntegration && !hasAnthropicKey) {
     console.error(
-      "ERROR: AI API keys not configured.\n" +
-        "Set ANTHROPIC_API_KEY and OPENAI_API_KEY in .env,\n" +
-        "or configure Replit AI Integrations."
+      "ERROR: Anthropic API key not configured.\n" +
+        "  On Replit: enable the Anthropic AI Integration in the integrations panel.\n" +
+        "  Locally: set ANTHROPIC_API_KEY in your .env file."
+    );
+    process.exit(1);
+  }
+
+  if (!hasGeminiIntegration && !hasGeminiKey) {
+    console.error(
+      "ERROR: Gemini API key not configured.\n" +
+        "  On Replit: enable the Gemini AI Integration in the integrations panel.\n" +
+        "  Locally: set GEMINI_API_KEY in your .env file.\n" +
+        "  Get a key at https://aistudio.google.com/app/apikey"
     );
     process.exit(1);
   }

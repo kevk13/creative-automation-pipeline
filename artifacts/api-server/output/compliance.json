@@ -1,18 +1,18 @@
 {
-  "generatedAt": "2026-05-14T20:59:27.074Z",
+  "generatedAt": "2026-05-14T21:35:42.331Z",
   "colorCompliance": [
     {
       "imagePath": "/home/runner/workspace/artifacts/api-server/output/energize-daily-face-serum/1x1/final.png",
       "productName": "Energize Daily Face Serum",
       "aspectRatio": "1x1",
       "dominantColors": [
-        "#c0a080",
-        "#e0c0c0",
+        "#e0e0e0",
         "#606060",
         "#e0e0c0",
-        "#c0c0a0"
+        "#a08080",
+        "#808080"
       ],
-      "score": 0.8809200687102141,
+      "score": 0.8955911456171114,
       "pass": true
     },
     {
@@ -20,13 +20,13 @@
       "productName": "Energize Daily Face Serum",
       "aspectRatio": "9x16",
       "dominantColors": [
-        "#c0a080",
-        "#c0c0a0",
+        "#e0e0e0",
         "#606060",
-        "#e0c0a0",
-        "#e0c0c0"
+        "#808060",
+        "#e0e0c0",
+        "#806060"
       ],
-      "score": 0.8672978953060991,
+      "score": 0.8955911456171114,
       "pass": true
     },
     {
@@ -34,13 +34,13 @@
       "productName": "Energize Daily Face Serum",
       "aspectRatio": "16x9",
       "dominantColors": [
-        "#c0a080",
-        "#e0c0c0",
+        "#e0e0e0",
         "#606060",
-        "#404020",
-        "#e0c0a0"
+        "#e0e0c0",
+        "#404040",
+        "#a0a0a0"
       ],
-      "score": 0.9023834644417971,
+      "score": 0.9353226902799238,
       "pass": true
     },
     {
@@ -48,13 +48,13 @@
       "productName": "Revive Night Repair Cream",
       "aspectRatio": "1x1",
       "dominantColors": [
-        "#404040",
         "#c0c0c0",
         "#606060",
         "#e0e0e0",
-        "#a0a0a0"
+        "#808080",
+        "#c0e0c0"
       ],
-      "score": 0.9353226902799238,
+      "score": 0.8955911456171114,
       "pass": true
     },
     {
@@ -63,12 +63,12 @@
       "aspectRatio": "9x16",
       "dominantColors": [
         "#c0c0c0",
-        "#404040",
-        "#606060",
         "#e0e0e0",
+        "#606060",
+        "#c0e0c0",
         "#a0a0a0"
       ],
-      "score": 0.9353226902799238,
+      "score": 0.8955911456171114,
       "pass": true
     },
     {
@@ -76,13 +76,13 @@
       "productName": "Revive Night Repair Cream",
       "aspectRatio": "16x9",
       "dominantColors": [
-        "#404040",
-        "#c0c0c0",
         "#606060",
-        "#e0e0e0",
-        "#202020"
+        "#808080",
+        "#c0e0c0",
+        "#c0c0c0",
+        "#a0a0a0"
       ],
-      "score": 0.9353226902799238,
+      "score": 0.8650839743753026,
       "pass": true
     }
   ],
@@ -92,42 +92,42 @@
       "productName": "Energize Daily Face Serum",
       "aspectRatio": "1x1",
       "logoPresent": true,
-      "reasoning": "The image contains the 'VITARA NATURALS' brand name and logo (a leaf symbol) on the product bottle label, and there is also brand tagline text 'Science-backed. Nature-inspired.' overlaid on the image."
+      "reasoning": "The product bottle clearly displays 'VITARA NATURALS' branding text on the label, along with product information. The text overlay at the bottom 'Science-backed. Nature-inspired.' appears to be a brand tagline/watermark."
     },
     {
       "imagePath": "/home/runner/workspace/artifacts/api-server/output/energize-daily-face-serum/9x16/final.png",
       "productName": "Energize Daily Face Serum",
       "aspectRatio": "9x16",
       "logoPresent": true,
-      "reasoning": "The image clearly shows the 'VITARA NATURALS' brand name and logo (featuring a leaf design) on the product bottle label, along with product text 'ENERGIZE DAILY FACE SERUM' and tagline 'Science-backed. Nature-inspired.' at the bottom."
+      "reasoning": "The product label clearly displays 'VITARA NATURALS' branding text and a 'C' logo icon on the serum bottle, which serves as the brand's identity and trademark."
     },
     {
       "imagePath": "/home/runner/workspace/artifacts/api-server/output/energize-daily-face-serum/16x9/final.png",
       "productName": "Energize Daily Face Serum",
       "aspectRatio": "16x9",
       "logoPresent": true,
-      "reasoning": "The image shows a clear brand logo and text reading 'VITARA NATURALS' on the product bottle label, along with a leaf icon above the text."
+      "reasoning": "The product label clearly shows 'VITARA NATURALS' branding on the amber bottle, which serves as the brand's text logo/wordmark. Additionally, there appears to be a circular logo element with 'C' visible on the label."
     },
     {
       "imagePath": "/home/runner/workspace/artifacts/api-server/output/revive-night-repair-cream/1x1/final.png",
       "productName": "Revive Night Repair Cream",
       "aspectRatio": "1x1",
-      "logoPresent": false,
-      "reasoning": "The image shows a product label for 'VITARA NATURALS Revive Night Repair Cream' which is the product's own packaging text, not a separate brand logo, text logo, or watermark overlaid on the image. The tagline 'Science-backed. Nature-inspired.' appears to be part of the marketing presentation rather than a watermark."
+      "logoPresent": true,
+      "reasoning": "The image contains the brand name 'VITARA NATURALS' prominently displayed on the product jar, along with a circular botanical logo/icon on the right side of the label. Additionally, there is text overlay at the bottom reading 'Science-backed. Nature-inspired.' which serves as a brand tagline/watermark."
     },
     {
       "imagePath": "/home/runner/workspace/artifacts/api-server/output/revive-night-repair-cream/9x16/final.png",
       "productName": "Revive Night Repair Cream",
       "aspectRatio": "9x16",
       "logoPresent": true,
-      "reasoning": "The product label clearly shows 'VITARA NATURALS' as the brand name on the cream jar, which serves as both a brand identifier and product labeling. Additionally, the tagline 'Science-backed. Nature-inspired.' appears at the bottom of the image, which functions as branded text/messaging."
+      "reasoning": "The image contains the 'VITARA NATURALS' brand text logo on the product label, along with a small botanical icon/logo depicting a leaf or plant design in a circular shape on the right side of the label."
     },
     {
       "imagePath": "/home/runner/workspace/artifacts/api-server/output/revive-night-repair-cream/16x9/final.png",
       "productName": "Revive Night Repair Cream",
       "aspectRatio": "16x9",
       "logoPresent": true,
-      "reasoning": "The text 'VITARA NATURALS' is visible on the product jar/container in the image, which serves as a brand logo/text logo."
+      "reasoning": "The image shows the Vitara Naturals brand name prominently displayed on the product jar, along with a leaf logo icon on the right side of the label. The brand text 'VITARA NATURALS®' serves as both product identification and brand watermark."
     }
   ],
   "legalCompliance": {
