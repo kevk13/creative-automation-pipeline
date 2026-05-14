@@ -1,3 +1,4 @@
+import "dotenv/config";
 import { validateAiClients } from "./lib/ai-clients.js";
 import app from "./app.js";
 import { logger } from "./lib/logger.js";
