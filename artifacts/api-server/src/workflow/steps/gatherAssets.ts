@@ -6,6 +6,8 @@ import { logStep, logStepError } from "../../campaign-logger.js";
 import { emitProgress } from "../../progress-bus.js";
 import { OUTPUT_DIR } from "../../lib/paths.js";
 
+const AssetSourceEnum = z.enum(["reused", "generated", "fallback_to_generated"]);
+
 const GatherAssetsInputSchema = z.object({
   runId: z.string(),
   brief: CampaignBriefSchema,
@@ -15,6 +17,7 @@ const GatherAssetsOutputSchema = z.object({
   runId: z.string(),
   brief: CampaignBriefSchema,
   assets: z.record(z.string(), z.string()),
+  assetSources: z.record(z.string(), AssetSourceEnum),
   outputDir: z.string(),
 });
 
@@ -27,19 +30,29 @@ export const gatherAssetsStep = createStep({
     const { runId, brief } = inputData;
     const outputDir = OUTPUT_DIR;
 
-    emitProgress({ runId, step: "gatherAssets", status: "running", message: `Generating assets for ${brief.products.length} products...` });
+    emitProgress({
+      runId,
+      step: "gatherAssets",
+      status: "running",
+      message: `Gathering assets for ${brief.products.length} products...`,
+    });
 
     try {
       logStep("gatherAssets", "Starting asset gathering", {
         products: brief.products.map((p) => p.productName),
       });
 
-      const assets = await runAssetGathererAgent(brief, outputDir);
+      const { assets, assetSources } = await runAssetGathererAgent(brief, outputDir);
 
-      logStep("gatherAssets", "All assets gathered", { assets });
-      emitProgress({ runId, step: "gatherAssets", status: "complete", message: "All product images ready" });
+      logStep("gatherAssets", "All assets gathered", { assets, assetSources });
+      emitProgress({
+        runId,
+        step: "gatherAssets",
+        status: "complete",
+        message: "All product images ready",
+      });
 
-      return { runId, brief, assets, outputDir };
+      return { runId, brief, assets, assetSources, outputDir };
     } catch (err) {
       logStepError("gatherAssets", err);
       emitProgress({ runId, step: "gatherAssets", status: "error", error: String(err) });

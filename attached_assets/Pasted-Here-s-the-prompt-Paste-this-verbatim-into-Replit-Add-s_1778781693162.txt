@@ -1,0 +1,52 @@
+Here’s the prompt. Paste this verbatim into Replit.
+
+Add support for reusing existing brand assets in the creative automation pipeline. The PDF requires this capability: “Accept input assets and reuse them when available. When assets are missing, generate new ones using a GenAI image model.” Current implementation always generates via Nano Banana. We need to add the reuse path while keeping generation as fallback.
+Schema changes:
+Update the brief schema (Zod) to add an optional existingAssetPath field to each product. The field accepts:
+	•	A relative file path to a local asset (e.g., ./assets/vitara/serum-hero.jpg)
+	•	A URL to a hosted asset (e.g., https://...)
+	•	Null or omitted, which triggers the generation fallback
+Update both sample briefs (Vitara Naturals and Sterling Atelier) to demonstrate both modes:
+	•	Create one variant of each sample brief that uses existingAssetPath pointing to a placeholder asset path (the actual file does not need to exist for the schema demonstration, but the pipeline should handle the missing file gracefully by falling back to generation with a logged warning).
+	•	Keep one variant of each that omits existingAssetPath to demonstrate the generation fallback path.
+The UI sample loader should now show four options: “Vitara Naturals (reuse)”, “Vitara Naturals (generate)”, “Sterling Atelier (reuse)”, “Sterling Atelier (generate)”.
+Image generator agent changes:
+The image generator agent currently always calls Nano Banana. Refactor it to:
+	1.	Check if existingAssetPath is provided for the product
+	2.	If provided and the file exists locally or fetches successfully from URL: load the asset, skip Nano Banana, log the reuse decision, and pass the asset to the next agent in the workflow
+	3.	If provided but the asset cannot be loaded (file missing, URL fails): log a warning that named the product and the failed path, then fall back to Nano Banana generation
+	4.	If not provided: generate via Nano Banana as before
+The reuse path must not contribute to cost tracking since no API call was made. Log a structured entry with assetSource: "reused" or assetSource: "generated" so observability captures which path was taken per asset.
+Ratio renderer changes:
+The ratio renderer currently receives generated images and produces 3 aspect ratios. This should work identically whether the source image came from reuse or generation. Confirm the renderer is source-agnostic. If it currently makes assumptions about image format or dimensions that only hold for Nano Banana outputs, normalize the input handling so any source image works.
+Compliance agent considerations:
+The compliance agent should run on both reused and generated assets. This is actually more valuable for reused assets because we’re checking that the brand’s actual photography passes color and logo compliance, not just that GenAI output happens to land near the brand palette.
+No changes needed to compliance logic, but verify it runs on both paths.
+Logging:
+Add a new log entry type for asset decision making:
+
+{
+  "agent": "image_generator",
+  "operation": "asset_decision",
+  "product": "Energize Daily Face Serum",
+  "decision": "reused" | "generated" | "fallback_to_generated",
+  "assetPath": "./assets/vitara/serum-hero.jpg",
+  "reason": "asset_provided_and_loaded" | "no_asset_provided" | "asset_load_failed",
+  "timestamp": "..."
+}
+
+
+This makes the reuse-vs-generate decision visible in the structured logs and in the run manifest.
+UI updates:
+In the brief preview section of the UI, indicate per product whether it will be reused or generated. Small badge next to each product name: “Reuse” (green) or “Generate” (amber). This makes the strategic choice visible to the user before they run the pipeline.
+In the results gallery, add a small caption under each creative indicating “Sourced from brand asset” or “Generated via Nano Banana” so the demo video can show both paths clearly.
+Testing:
+After implementation, run the pipeline twice with the Vitara Naturals brief:
+	1.	Once with the reuse variant (using a placeholder path that will trigger the fallback warning since no real asset exists)
+	2.	Once with the generate variant (current behavior)
+Show me the structured log output from both runs so I can verify the asset decision logging is wired correctly and the fallback path works as designed.
+Important constraint:
+Do not break the existing generate-only path. The current pipeline must work identically when no existingAssetPath is provided. This is a strict additive change — new capability, zero regression on existing behavior.
+
+That prompt covers schema, agent logic, fallback handling, observability, UI, and testing. The “strict additive change” line at the end is critical because you don’t want Replit refactoring the existing flow in a way that breaks what you already have working.
+Paste the log outputs from both test runs back here when it’s done and I’ll verify the implementation before you write the README.​​​​​​​​​​​​​​​​

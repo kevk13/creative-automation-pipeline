@@ -4,6 +4,7 @@ export const ProductSchema = z.object({
   productName: z.string().min(1),
   productDescription: z.string().min(1),
   localAssetPath: z.string().optional(),
+  existingAssetPath: z.string().optional(),
 });
 
 export const CampaignBriefSchema = z.object({

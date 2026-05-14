@@ -6,6 +6,7 @@ import { CampaignBriefSchema } from "../../schemas/campaignBrief.js";
 import { slugify } from "../../schemas/campaignBrief.js";
 import { logStep, logStepError } from "../../campaign-logger.js";
 import { emitProgress } from "../../progress-bus.js";
+import type { AssetSource } from "../../agents/assetGatherer.js";
 
 export type ManifestEntry = {
   productName: string;
@@ -14,7 +15,7 @@ export type ManifestEntry = {
   filePath: string;
   fileSize: number;
   generationTimestamp: string;
-  generationMethod: "local" | "gpt-image-1" | "dalle-3";
+  generationMethod: "reused" | "gemini-2.5-flash-image" | "fallback_to_generated";
 };
 
 export type OutputManifest = {
@@ -22,10 +23,13 @@ export type OutputManifest = {
   entries: ManifestEntry[];
 };
 
+const AssetSourceEnum = z.enum(["reused", "generated", "fallback_to_generated"]);
+
 const OrganizeInputSchema = z.object({
   runId: z.string(),
   brief: CampaignBriefSchema,
   renders: z.record(z.string(), z.record(z.string(), z.string())),
+  assetSources: z.record(z.string(), AssetSourceEnum),
   outputDir: z.string(),
 });
 
@@ -37,13 +41,19 @@ const OrganizeOutputSchema = z.object({
   outputDir: z.string(),
 });
 
+function toGenerationMethod(source: AssetSource): ManifestEntry["generationMethod"] {
+  if (source === "reused") return "reused";
+  if (source === "fallback_to_generated") return "fallback_to_generated";
+  return "gemini-2.5-flash-image";
+}
+
 export const organizeOutputsStep = createStep({
   id: "organizeOutputs",
   description: "Verify output structure and write manifest.json",
   inputSchema: OrganizeInputSchema,
   outputSchema: OrganizeOutputSchema,
   async execute({ inputData }) {
-    const { runId, brief, renders, outputDir } = inputData;
+    const { runId, brief, renders, assetSources, outputDir } = inputData;
     const timestamp = new Date().toISOString();
     const entries: ManifestEntry[] = [];
 
@@ -52,19 +62,14 @@ export const organizeOutputsStep = createStep({
     try {
       for (const [productName, ratioMap] of Object.entries(renders)) {
         const productSlug = slugify(productName);
+        const source: AssetSource = assetSources[productName] ?? "generated";
 
         for (const [ratio, finalPath] of Object.entries(ratioMap)) {
-          const exists = fs.existsSync(finalPath);
-          if (!exists) {
+          if (!fs.existsSync(finalPath)) {
             throw new Error(`Expected file missing: ${finalPath}`);
           }
 
           const stat = fs.statSync(finalPath);
-          const generatedDir = path.resolve(outputDir, "generated");
-          const generatedAsset = path.resolve(generatedDir, `${productSlug}.png`);
-          const method: ManifestEntry["generationMethod"] = fs.existsSync(generatedAsset)
-            ? "gpt-image-1"
-            : "local";
 
           entries.push({
             productName,
@@ -73,7 +78,7 @@ export const organizeOutputsStep = createStep({
             filePath: finalPath,
             fileSize: stat.size,
             generationTimestamp: timestamp,
-            generationMethod: method,
+            generationMethod: toGenerationMethod(source),
           });
         }
       }
@@ -87,7 +92,12 @@ export const organizeOutputsStep = createStep({
         totalFiles: entries.length,
       });
 
-      emitProgress({ runId, step: "organizeOutputs", status: "complete", message: `Manifest written — ${entries.length} files` });
+      emitProgress({
+        runId,
+        step: "organizeOutputs",
+        status: "complete",
+        message: `Manifest written — ${entries.length} files`,
+      });
 
       return { runId, brief, renders, manifest, outputDir };
     } catch (err) {

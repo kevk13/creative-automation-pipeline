@@ -5,6 +5,7 @@ type Product = {
   productName: string;
   productDescription: string;
   localAssetPath?: string;
+  existingAssetPath?: string;
 };
 
 type CampaignBrief = {
@@ -165,11 +166,18 @@ function BriefUpload({ onBriefParsed }: { onBriefParsed: (brief: CampaignBrief) 
     }
   }, [BASE, onBriefParsed, parseBriefText]);
 
+  const PREFERRED_SAMPLES = [
+    "vitara-generate.yaml",
+    "vitara-reuse.yaml",
+    "sample-jewelry.yaml",
+    "sterling-reuse.yaml",
+  ];
+
   const SAMPLE_LABELS: Record<string, string> = {
-    "sample-jewelry.yaml": "Sterling Atelier · YAML",
-    "sample-jewelry.json": "Sterling Atelier · JSON",
-    "sample-consumer-goods.yaml": "Vitara Naturals · YAML",
-    "sample-consumer-goods.json": "Vitara Naturals · JSON",
+    "vitara-generate.yaml": "Vitara Naturals · Generate",
+    "vitara-reuse.yaml": "Vitara Naturals · Reuse",
+    "sample-jewelry.yaml": "Sterling Atelier · Generate",
+    "sterling-reuse.yaml": "Sterling Atelier · Reuse",
   };
 
   return (
@@ -190,23 +198,29 @@ function BriefUpload({ onBriefParsed }: { onBriefParsed: (brief: CampaignBrief) 
         <p className="text-slate-400 text-sm mt-1">Supports YAML or JSON — click to browse</p>
       </div>
 
-      {samples.length > 0 && (
-        <div className="space-y-1.5">
-          <p className="text-xs text-slate-400 uppercase tracking-wide font-medium">Or load a sample</p>
-          <div className="grid grid-cols-2 gap-2">
-            {samples.map((s) => (
+      <div className="space-y-1.5">
+        <p className="text-xs text-slate-400 uppercase tracking-wide font-medium">Or load a sample</p>
+        <div className="grid grid-cols-2 gap-2">
+          {PREFERRED_SAMPLES.filter((s) => samples.length === 0 || samples.includes(s)).map((s) => {
+            const isReuse = s.includes("reuse");
+            return (
               <button
                 key={s}
                 onClick={() => loadSample(s)}
                 disabled={loadingSample !== null}
-                className="text-left px-3 py-2 rounded-lg border border-slate-200 bg-white hover:border-slate-400 hover:bg-slate-50 transition-colors text-xs text-slate-600 font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                className="text-left px-3 py-2 rounded-lg border bg-white transition-colors text-xs font-medium disabled:opacity-50 disabled:cursor-not-allowed hover:bg-slate-50 border-slate-200 hover:border-slate-400 text-slate-600"
               >
-                {loadingSample === s ? "Loading…" : (SAMPLE_LABELS[s] ?? s)}
+                <span>{loadingSample === s ? "Loading…" : (SAMPLE_LABELS[s] ?? s)}</span>
+                {loadingSample !== s && (
+                  <span className={`ml-1.5 px-1.5 py-0.5 rounded-full text-[10px] font-semibold ${isReuse ? "bg-green-100 text-green-700" : "bg-amber-100 text-amber-700"}`}>
+                    {isReuse ? "Reuse" : "Generate"}
+                  </span>
+                )}
               </button>
-            ))}
-          </div>
+            );
+          })}
         </div>
-      )}
+      </div>
 
       {error && (
         <div className="bg-red-50 border border-red-200 rounded-lg p-3 text-red-700 text-sm">{error}</div>
@@ -232,9 +246,18 @@ function BriefUpload({ onBriefParsed }: { onBriefParsed: (brief: CampaignBrief) 
               <span className="text-slate-500">Products ({brief.products.length})</span>
               <div className="mt-1 space-y-1">
                 {brief.products.map((p, i) => (
-                  <div key={i} className="bg-white border border-slate-200 rounded p-2">
-                    <p className="font-medium text-slate-800 text-sm">{p.productName}</p>
-                    <p className="text-slate-500 text-xs">{p.productDescription}</p>
+                  <div key={i} className="bg-white border border-slate-200 rounded p-2 flex items-start justify-between gap-2">
+                    <div className="min-w-0">
+                      <p className="font-medium text-slate-800 text-sm">{p.productName}</p>
+                      <p className="text-slate-500 text-xs">{p.productDescription}</p>
+                    </div>
+                    <span className={`flex-shrink-0 mt-0.5 text-[10px] px-2 py-0.5 rounded-full font-semibold ${
+                      p.existingAssetPath
+                        ? "bg-green-100 text-green-700"
+                        : "bg-amber-100 text-amber-700"
+                    }`}>
+                      {p.existingAssetPath ? "Reuse" : "Generate"}
+                    </span>
                   </div>
                 ))}
               </div>
@@ -375,13 +398,20 @@ function ResultsGallery({ manifest, complianceReport }: { manifest: any; complia
   const [lightbox, setLightbox] = useState<{ slug: string; ratio: Ratio } | null>(null);
   const BASE = import.meta.env.BASE_URL.replace(/\/$/, "");
 
-  const byProduct: Record<string, { productName: string; productSlug: string; ratios: Ratio[] }> = {};
+  type GenerationMethod = "reused" | "gemini-2.5-flash-image" | "fallback_to_generated" | string;
+  const byProduct: Record<string, { productName: string; productSlug: string; ratios: Ratio[]; generationMethod: GenerationMethod }> = {};
   for (const entry of manifest?.entries ?? []) {
     if (!byProduct[entry.productSlug]) {
-      byProduct[entry.productSlug] = { productName: entry.productName, productSlug: entry.productSlug, ratios: [] };
+      byProduct[entry.productSlug] = { productName: entry.productName, productSlug: entry.productSlug, ratios: [], generationMethod: entry.generationMethod ?? "gemini-2.5-flash-image" };
     }
     byProduct[entry.productSlug]!.ratios.push(entry.aspectRatio as Ratio);
   }
+
+  const sourceCaption = (method: GenerationMethod): string => {
+    if (method === "reused") return "Sourced from brand asset";
+    if (method === "fallback_to_generated") return "Generated via Nano Banana (asset fallback)";
+    return "Generated via Nano Banana";
+  };
 
   const getImageUrl = (slug: string, ratio: Ratio) => `${BASE}/api/output/${slug}/${ratio}/final.png`;
   const colorItem = (slug: string, ratio: Ratio) =>
@@ -391,7 +421,18 @@ function ResultsGallery({ manifest, complianceReport }: { manifest: any; complia
     <div className="space-y-10">
       {Object.values(byProduct).map((product) => (
         <div key={product.productSlug} className="space-y-4">
-          <h3 className="text-lg font-semibold text-slate-800 border-b border-slate-200 pb-2">{product.productName}</h3>
+          <div className="flex items-center gap-3 border-b border-slate-200 pb-2">
+            <h3 className="text-lg font-semibold text-slate-800">{product.productName}</h3>
+            <span className={`text-[10px] px-2 py-0.5 rounded-full font-semibold ${
+              product.generationMethod === "reused"
+                ? "bg-green-100 text-green-700"
+                : product.generationMethod === "fallback_to_generated"
+                ? "bg-orange-100 text-orange-700"
+                : "bg-amber-100 text-amber-700"
+            }`}>
+              {sourceCaption(product.generationMethod)}
+            </span>
+          </div>
           <div className="grid grid-cols-3 gap-4">
             {(product.ratios.length ? product.ratios : RATIOS).map((ratio) => {
               const c = colorItem(product.productSlug, ratio);

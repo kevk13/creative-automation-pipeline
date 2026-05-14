@@ -1,59 +1,59 @@
 {
-  "generatedAt": "2026-05-14T17:58:17.139Z",
+  "generatedAt": "2026-05-14T18:10:12.587Z",
   "entries": [
     {
-      "productName": "Sterling Silver Moonstone Necklace",
-      "productSlug": "sterling-silver-moonstone-necklace",
+      "productName": "Energize Daily Face Serum",
+      "productSlug": "energize-daily-face-serum",
       "aspectRatio": "1x1",
-      "filePath": "/home/runner/workspace/artifacts/api-server/output/sterling-silver-moonstone-necklace/1x1/final.png",
-      "fileSize": 1453229,
-      "generationTimestamp": "2026-05-14T17:58:17.139Z",
-      "generationMethod": "gpt-image-1"
+      "filePath": "/home/runner/workspace/artifacts/api-server/output/energize-daily-face-serum/1x1/final.png",
+      "fileSize": 1438730,
+      "generationTimestamp": "2026-05-14T18:10:12.587Z",
+      "generationMethod": "gemini-2.5-flash-image"
     },
     {
-      "productName": "Sterling Silver Moonstone Necklace",
-      "productSlug": "sterling-silver-moonstone-necklace",
+      "productName": "Energize Daily Face Serum",
+      "productSlug": "energize-daily-face-serum",
       "aspectRatio": "9x16",
-      "filePath": "/home/runner/workspace/artifacts/api-server/output/sterling-silver-moonstone-necklace/9x16/final.png",
-      "fileSize": 1938339,
-      "generationTimestamp": "2026-05-14T17:58:17.139Z",
-      "generationMethod": "gpt-image-1"
+      "filePath": "/home/runner/workspace/artifacts/api-server/output/energize-daily-face-serum/9x16/final.png",
+      "fileSize": 2149865,
+      "generationTimestamp": "2026-05-14T18:10:12.587Z",
+      "generationMethod": "gemini-2.5-flash-image"
     },
     {
-      "productName": "Sterling Silver Moonstone Necklace",
-      "productSlug": "sterling-silver-moonstone-necklace",
+      "productName": "Energize Daily Face Serum",
+      "productSlug": "energize-daily-face-serum",
       "aspectRatio": "16x9",
-      "filePath": "/home/runner/workspace/artifacts/api-server/output/sterling-silver-moonstone-necklace/16x9/final.png",
-      "fileSize": 2105545,
-      "generationTimestamp": "2026-05-14T17:58:17.139Z",
-      "generationMethod": "gpt-image-1"
+      "filePath": "/home/runner/workspace/artifacts/api-server/output/energize-daily-face-serum/16x9/final.png",
+      "fileSize": 1618221,
+      "generationTimestamp": "2026-05-14T18:10:12.587Z",
+      "generationMethod": "gemini-2.5-flash-image"
     },
     {
-      "productName": "Sterling Silver Hoop Earrings",
-      "productSlug": "sterling-silver-hoop-earrings",
+      "productName": "Revive Night Repair Cream",
+      "productSlug": "revive-night-repair-cream",
       "aspectRatio": "1x1",
-      "filePath": "/home/runner/workspace/artifacts/api-server/output/sterling-silver-hoop-earrings/1x1/final.png",
-      "fileSize": 1616053,
-      "generationTimestamp": "2026-05-14T17:58:17.139Z",
-      "generationMethod": "gpt-image-1"
+      "filePath": "/home/runner/workspace/artifacts/api-server/output/revive-night-repair-cream/1x1/final.png",
+      "fileSize": 1235449,
+      "generationTimestamp": "2026-05-14T18:10:12.587Z",
+      "generationMethod": "gemini-2.5-flash-image"
     },
     {
-      "productName": "Sterling Silver Hoop Earrings",
-      "productSlug": "sterling-silver-hoop-earrings",
+      "productName": "Revive Night Repair Cream",
+      "productSlug": "revive-night-repair-cream",
       "aspectRatio": "9x16",
-      "filePath": "/home/runner/workspace/artifacts/api-server/output/sterling-silver-hoop-earrings/9x16/final.png",
-      "fileSize": 2096596,
-      "generationTimestamp": "2026-05-14T17:58:17.139Z",
-      "generationMethod": "gpt-image-1"
+      "filePath": "/home/runner/workspace/artifacts/api-server/output/revive-night-repair-cream/9x16/final.png",
+      "fileSize": 1630036,
+      "generationTimestamp": "2026-05-14T18:10:12.587Z",
+      "generationMethod": "gemini-2.5-flash-image"
     },
     {
-      "productName": "Sterling Silver Hoop Earrings",
-      "productSlug": "sterling-silver-hoop-earrings",
+      "productName": "Revive Night Repair Cream",
+      "productSlug": "revive-night-repair-cream",
       "aspectRatio": "16x9",
-      "filePath": "/home/runner/workspace/artifacts/api-server/output/sterling-silver-hoop-earrings/16x9/final.png",
-      "fileSize": 2270616,
-      "generationTimestamp": "2026-05-14T17:58:17.139Z",
-      "generationMethod": "gpt-image-1"
+      "filePath": "/home/runner/workspace/artifacts/api-server/output/revive-night-repair-cream/16x9/final.png",
+      "fileSize": 1295812,
+      "generationTimestamp": "2026-05-14T18:10:12.587Z",
+      "generationMethod": "gemini-2.5-flash-image"
     }
   ]
 }

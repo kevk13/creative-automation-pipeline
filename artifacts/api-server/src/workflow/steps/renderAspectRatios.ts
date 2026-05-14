@@ -16,10 +16,13 @@ export const ASPECT_RATIOS = {
 
 export type AspectRatio = keyof typeof ASPECT_RATIOS;
 
+const AssetSourceEnum = z.enum(["reused", "generated", "fallback_to_generated"]);
+
 const RenderInputSchema = z.object({
   runId: z.string(),
   brief: CampaignBriefSchema,
   assets: z.record(z.string(), z.string()),
+  assetSources: z.record(z.string(), AssetSourceEnum),
   outputDir: z.string(),
 });
 
@@ -27,16 +30,17 @@ const RenderOutputSchema = z.object({
   runId: z.string(),
   brief: CampaignBriefSchema,
   renders: z.record(z.string(), z.record(z.string(), z.string())),
+  assetSources: z.record(z.string(), AssetSourceEnum),
   outputDir: z.string(),
 });
 
 export const renderAspectRatiosStep = createStep({
   id: "renderAspectRatios",
-  description: "Render each asset into 1:1, 9:16, and 16:9 aspect ratios using Sharp",
+  description: "Render each asset into 1:1, 9:16, and 16:9 aspect ratios using Sharp. Source-agnostic — works identically for reused and generated assets.",
   inputSchema: RenderInputSchema,
   outputSchema: RenderOutputSchema,
   async execute({ inputData }) {
-    const { runId, brief, assets, outputDir } = inputData;
+    const { runId, brief, assets, assetSources, outputDir } = inputData;
     const renders: Record<string, Record<string, string>> = {};
 
     emitProgress({ runId, step: "renderAspectRatios", status: "running", message: "Rendering aspect ratios..." });
@@ -51,6 +55,7 @@ export const renderAspectRatiosStep = createStep({
           fs.mkdirSync(ratioDir, { recursive: true });
           const outPath = path.resolve(ratioDir, "base.png");
 
+          // Sharp handles JPEG, PNG, WebP, TIFF, AVIF — source format is irrelevant
           await sharp(assetPath)
             .resize(dims.width, dims.height, {
               fit: "cover",
@@ -65,6 +70,7 @@ export const renderAspectRatiosStep = createStep({
             width: dims.width,
             height: dims.height,
             path: outPath,
+            source: assetSources[productName],
           });
         } catch (err) {
           logStepError("renderAspectRatios", err, { productName, ratio });
@@ -75,6 +81,6 @@ export const renderAspectRatiosStep = createStep({
 
     emitProgress({ runId, step: "renderAspectRatios", status: "complete", message: "All aspect ratios rendered" });
 
-    return { runId, brief, renders, outputDir };
+    return { runId, brief, renders, assetSources, outputDir };
   },
 });

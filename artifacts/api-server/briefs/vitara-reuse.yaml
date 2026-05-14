@@ -1,0 +1,20 @@
+clientName: Vitara Naturals
+products:
+  - productName: Energize Daily Face Serum
+    productDescription: "Vitamin C brightening serum with hyaluronic acid, 30ml, dermatologist-tested"
+    existingAssetPath: "./assets/vitara/serum-hero.jpg"
+  - productName: Revive Night Repair Cream
+    productDescription: "Retinol-infused overnight moisturiser, restores skin barrier, 50ml"
+    existingAssetPath: "./assets/vitara/cream-hero.jpg"
+targetRegion: North America
+targetAudience: "Women 30-50, health-conscious, disposable income, shops clean beauty DTC brands"
+campaignMessage: "Science-backed. Nature-inspired."
+brandPalette:
+  - "#4A7C59"
+  - "#F5EFE6"
+  - "#2C3E35"
+prohibitedWords:
+  - cure
+  - guaranteed
+  - miracle
+  - free
