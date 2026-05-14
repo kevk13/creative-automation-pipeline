@@ -25,7 +25,8 @@ export type AssetSourceMap = Record<string, AssetSource>;
  */
 export async function runAssetGathererAgent(
   brief: CampaignBrief,
-  outputDir: string
+  outputDir: string,
+  runId?: string
 ): Promise<{ assets: AssetMap; assetSources: AssetSourceMap }> {
   const assetMap: AssetMap = {};
   const assetSources: AssetSourceMap = {};
@@ -105,7 +106,8 @@ export async function runAssetGathererAgent(
           targetAudience: brief.targetAudience,
           brandPalette: brief.brandPalette,
         },
-        outputDir
+        outputDir,
+        runId
       );
       assetMap[product.productName] = result.assetPath;
       assetSources[product.productName] = product.existingAssetPath

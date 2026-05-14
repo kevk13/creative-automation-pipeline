@@ -89,7 +89,9 @@ router.get("/run/:runId/status", (req, res) => {
     res.status(404).json({ error: "Run not found" });
     return;
   }
-  res.json(state);
+  // Strip internal accumulator — costEvents are exposed via runReport
+  const { _costEvents: _omit, ...clientState } = state;
+  res.json(clientState);
 });
 
 router.get("/manifest", (_req, res) => {

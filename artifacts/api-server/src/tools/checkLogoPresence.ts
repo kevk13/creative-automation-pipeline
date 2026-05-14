@@ -1,6 +1,7 @@
 import fs from "fs";
 import { createAnthropicClient, TEXT_MODEL } from "../lib/ai-clients.js";
 import { calcClaudeCost, logStep } from "../campaign-logger.js";
+import { recordCost } from "../lib/runStore.js";
 
 export type CheckLogoPresenceResult = {
   logoPresent: boolean;
@@ -8,7 +9,8 @@ export type CheckLogoPresenceResult = {
 };
 
 export async function checkLogoPresence(
-  imagePath: string
+  imagePath: string,
+  runId?: string
 ): Promise<CheckLogoPresenceResult> {
   try {
     const anthropic = createAnthropicClient();
@@ -47,8 +49,23 @@ export async function checkLogoPresence(
     logStep("checkLogoPresence", "Logo check complete", {
       imagePath,
       costUSD: cost,
+      inputTokens: response.usage.input_tokens,
+      outputTokens: response.usage.output_tokens,
       model: TEXT_MODEL,
     });
+
+    if (runId) {
+      recordCost(runId, {
+        tool: "checkLogoPresence",
+        model: TEXT_MODEL,
+        step: "checkCompliance",
+        product: imagePath.split("/").slice(-3, -2)[0] ?? "unknown",
+        inputTokens: response.usage.input_tokens,
+        outputTokens: response.usage.output_tokens,
+        costUSD: cost,
+        timestamp: new Date().toISOString(),
+      });
+    }
 
     const text =
       response.content[0].type === "text" ? response.content[0].text : "";

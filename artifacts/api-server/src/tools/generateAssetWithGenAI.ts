@@ -4,6 +4,7 @@ import { generateImage } from "@workspace/integrations-gemini-ai/image";
 import { createAnthropicClient, TEXT_MODEL } from "../lib/ai-clients.js";
 import { calcClaudeCost, logStep } from "../campaign-logger.js";
 import { withRetry } from "../lib/retry.js";
+import { recordCost } from "../lib/runStore.js";
 import type { Product, CampaignBrief } from "../schemas/campaignBrief.js";
 import { slugify } from "../schemas/campaignBrief.js";
 
@@ -17,7 +18,8 @@ export type GenerateAssetResult = {
 export async function generateAssetWithGenAI(
   product: Product,
   brief: Pick<CampaignBrief, "clientName" | "targetAudience" | "brandPalette">,
-  outputDir: string
+  outputDir: string,
+  runId?: string
 ): Promise<GenerateAssetResult> {
   const anthropic = createAnthropicClient();
 
@@ -27,6 +29,7 @@ export async function generateAssetWithGenAI(
 
   const assetPath = path.resolve(generatedDir, `${productSlug}.png`);
 
+  // ── Step 1: Claude crafts the image prompt ──────────────────────────────────
   const promptResponse = await anthropic.messages.create({
     model: TEXT_MODEL,
     max_tokens: 512,
@@ -67,6 +70,20 @@ Return ONLY the image generation prompt, nothing else.`,
     model: TEXT_MODEL,
   });
 
+  if (runId) {
+    recordCost(runId, {
+      tool: "generateAssetWithGenAI",
+      model: TEXT_MODEL,
+      step: "gatherAssets",
+      product: product.productName,
+      inputTokens: promptResponse.usage.input_tokens,
+      outputTokens: promptResponse.usage.output_tokens,
+      costUSD: claudeCost,
+      timestamp: new Date().toISOString(),
+    });
+  }
+
+  // ── Step 2: Gemini generates the image ─────────────────────────────────────
   const imagePrompt =
     promptResponse.content[0].type === "text" ? promptResponse.content[0].text : "";
 
@@ -90,6 +107,17 @@ Return ONLY the image generation prompt, nothing else.`,
     costUSD: 0,
     model: "gemini-2.5-flash-image",
   });
+
+  if (runId) {
+    recordCost(runId, {
+      tool: "geminiImageGeneration",
+      model: "gemini-2.5-flash-image",
+      step: "gatherAssets",
+      product: product.productName,
+      costUSD: 0,
+      timestamp: new Date().toISOString(),
+    });
+  }
 
   fs.writeFileSync(assetPath, Buffer.from(b64_json, "base64"));
 

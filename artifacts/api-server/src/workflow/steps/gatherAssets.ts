@@ -42,7 +42,7 @@ export const gatherAssetsStep = createStep({
         products: brief.products.map((p) => p.productName),
       });
 
-      const { assets, assetSources } = await runAssetGathererAgent(brief, outputDir);
+      const { assets, assetSources } = await runAssetGathererAgent(brief, outputDir, runId);
 
       logStep("gatherAssets", "All assets gathered", { assets, assetSources });
       emitProgress({

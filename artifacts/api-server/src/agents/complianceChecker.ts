@@ -39,7 +39,8 @@ export type ComplianceReport = {
  */
 export async function runComplianceCheckerAgent(
   brief: CampaignBrief,
-  renders: Record<string, Record<string, string>>
+  renders: Record<string, Record<string, string>>,
+  runId?: string
 ): Promise<ComplianceReport> {
   const colorCompliance: ColorComplianceItem[] = [];
   const logoCompliance: LogoComplianceItem[] = [];
@@ -73,7 +74,7 @@ export async function runComplianceCheckerAgent(
 
       try {
         logStep("complianceChecker", `Checking logo: ${productName} ${ratio}`);
-        const logoResult = await checkLogoPresence(finalPath);
+        const logoResult = await checkLogoPresence(finalPath, runId);
         logoCompliance.push({
           imagePath: finalPath,
           productName,

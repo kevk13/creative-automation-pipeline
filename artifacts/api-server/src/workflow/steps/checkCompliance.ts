@@ -33,7 +33,7 @@ export const checkComplianceStep = createStep({
     emitProgress({ runId, step: "checkCompliance", status: "running", message: "Running compliance checks..." });
 
     try {
-      const complianceReport = await runComplianceCheckerAgent(brief, renders);
+      const complianceReport = await runComplianceCheckerAgent(brief, renders, runId);
 
       const compliancePath = path.resolve(outputDir, "compliance.json");
       fs.writeFileSync(compliancePath, JSON.stringify(complianceReport, null, 2));

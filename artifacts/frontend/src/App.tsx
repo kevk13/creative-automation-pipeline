@@ -552,6 +552,7 @@ export default function App() {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [manifest, setManifest] = useState<any>(null);
   const [complianceReport, setComplianceReport] = useState<any>(null);
+  const [runReport, setRunReport] = useState<any>(null);
 
   const BASE = import.meta.env.BASE_URL.replace(/\/$/, "");
 
@@ -567,6 +568,7 @@ export default function App() {
     setErrorMessage(null);
     setManifest(null);
     setComplianceReport(null);
+    setRunReport(null);
     setCurrentMessage("Starting pipeline...");
 
     const payload = { ...brief, ...(logoServerPath ? { logoPath: logoServerPath } : {}) };
@@ -591,6 +593,7 @@ export default function App() {
             status: "running" | "done" | "error";
             manifest?: unknown;
             complianceReport?: unknown;
+            runReport?: unknown;
             error?: string;
           };
 
@@ -603,6 +606,7 @@ export default function App() {
             setSteps(() => Object.fromEntries(ALL_STEPS.map((s) => [s, "complete" as const])));
             setManifest(state.manifest);
             setComplianceReport(state.complianceReport);
+            setRunReport(state.runReport);
             setStatus("done");
             setCurrentMessage("Pipeline complete");
           } else if (state.status === "error") {
@@ -707,6 +711,105 @@ export default function App() {
               </p>
             </div>
             <ResultsGallery manifest={manifest} complianceReport={complianceReport} />
+          </section>
+        )}
+
+        {status === "done" && runReport && (
+          <section className="space-y-4">
+            <div className="border-t border-slate-200 pt-8">
+              <h2 className="text-base font-semibold text-slate-800 mb-1">4. Run Report</h2>
+              <p className="text-sm text-slate-500">Observability and cost breakdown for this pipeline run</p>
+            </div>
+
+            {/* Top-line metrics */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              {[
+                {
+                  label: "Total AI Cost",
+                  value: runReport.totalCostUSD < 0.01 && runReport.totalCostUSD > 0
+                    ? `< $0.01`
+                    : `$${runReport.totalCostUSD.toFixed(4)}`,
+                  sub: "claude-sonnet-4-5",
+                },
+                {
+                  label: "Run Duration",
+                  value: runReport.durationMs >= 60000
+                    ? `${(runReport.durationMs / 60000).toFixed(1)}m`
+                    : `${(runReport.durationMs / 1000).toFixed(1)}s`,
+                  sub: "wall-clock time",
+                },
+                {
+                  label: "AI Calls",
+                  value: String(runReport.aiCalls),
+                  sub: "total invocations",
+                },
+                {
+                  label: "Tokens Used",
+                  value: (runReport.totalInputTokens + runReport.totalOutputTokens).toLocaleString(),
+                  sub: `${runReport.totalInputTokens.toLocaleString()} in · ${runReport.totalOutputTokens.toLocaleString()} out`,
+                },
+              ].map((m) => (
+                <div key={m.label} className="bg-slate-50 rounded-lg p-4 border border-slate-100">
+                  <div className="text-xs text-slate-400 font-medium mb-1">{m.label}</div>
+                  <div className="text-2xl font-bold text-slate-900 tracking-tight">{m.value}</div>
+                  <div className="text-xs text-slate-400 mt-1">{m.sub}</div>
+                </div>
+              ))}
+            </div>
+
+            {/* Per-call breakdown */}
+            {runReport.costEvents?.length > 0 && (
+              <div className="bg-white border border-slate-200 rounded-lg overflow-hidden">
+                <div className="px-4 py-3 border-b border-slate-100 bg-slate-50">
+                  <span className="text-sm font-semibold text-slate-700">AI Call Log</span>
+                  <span className="ml-2 text-xs text-slate-400">{runReport.costEvents.length} calls</span>
+                </div>
+                <div className="overflow-x-auto">
+                  <table className="w-full text-xs">
+                    <thead>
+                      <tr className="border-b border-slate-100 text-left">
+                        <th className="px-4 py-2 text-slate-400 font-medium">Tool</th>
+                        <th className="px-4 py-2 text-slate-400 font-medium">Step</th>
+                        <th className="px-4 py-2 text-slate-400 font-medium">Product</th>
+                        <th className="px-4 py-2 text-slate-400 font-medium">Model</th>
+                        <th className="px-4 py-2 text-slate-400 font-medium text-right">In tokens</th>
+                        <th className="px-4 py-2 text-slate-400 font-medium text-right">Out tokens</th>
+                        <th className="px-4 py-2 text-slate-400 font-medium text-right">Cost</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {(runReport.costEvents as any[]).map((ev: any, i: number) => (
+                        <tr key={i} className={`border-b border-slate-50 ${i % 2 === 0 ? "bg-white" : "bg-slate-50/40"}`}>
+                          <td className="px-4 py-2 font-mono text-slate-600">{ev.tool}</td>
+                          <td className="px-4 py-2 text-slate-500">{ev.step}</td>
+                          <td className="px-4 py-2 text-slate-500 max-w-[160px] truncate" title={ev.product}>{ev.product ?? "—"}</td>
+                          <td className="px-4 py-2 text-slate-400">{ev.model}</td>
+                          <td className="px-4 py-2 text-right text-slate-500">{ev.inputTokens?.toLocaleString() ?? "—"}</td>
+                          <td className="px-4 py-2 text-right text-slate-500">{ev.outputTokens?.toLocaleString() ?? "—"}</td>
+                          <td className="px-4 py-2 text-right font-medium text-slate-700">
+                            {ev.costUSD === 0 ? <span className="text-slate-300">—</span> : `$${ev.costUSD.toFixed(5)}`}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                    <tfoot>
+                      <tr className="border-t border-slate-200 bg-slate-50">
+                        <td colSpan={4} className="px-4 py-2 text-slate-500 font-medium text-xs">Total</td>
+                        <td className="px-4 py-2 text-right font-medium text-slate-700">{runReport.totalInputTokens.toLocaleString()}</td>
+                        <td className="px-4 py-2 text-right font-medium text-slate-700">{runReport.totalOutputTokens.toLocaleString()}</td>
+                        <td className="px-4 py-2 text-right font-bold text-slate-900">${runReport.totalCostUSD.toFixed(5)}</td>
+                      </tr>
+                    </tfoot>
+                  </table>
+                </div>
+              </div>
+            )}
+
+            <p className="text-xs text-slate-400">
+              Gemini image generation cost is not returned by the integration and is logged as $0.
+              Claude claude-sonnet-4-5 is billed at $3.00/M input · $15.00/M output tokens.
+              Full structured logs are written to <code className="font-mono bg-slate-100 px-1 rounded">logs/run-*.json</code> on the server.
+            </p>
           </section>
         )}
       </main>
