@@ -1,133 +1,133 @@
 {
-  "generatedAt": "2026-05-14T18:31:52.970Z",
+  "generatedAt": "2026-05-14T20:59:27.074Z",
   "colorCompliance": [
     {
-      "imagePath": "/home/runner/workspace/artifacts/api-server/output/sterling-silver-moonstone-necklace/1x1/final.png",
-      "productName": "Sterling Silver Moonstone Necklace",
+      "imagePath": "/home/runner/workspace/artifacts/api-server/output/energize-daily-face-serum/1x1/final.png",
+      "productName": "Energize Daily Face Serum",
       "aspectRatio": "1x1",
       "dominantColors": [
-        "#c0c0c0",
-        "#a0a0a0",
-        "#404040",
-        "#e0e0e0",
-        "#e0c0c0"
+        "#c0a080",
+        "#e0c0c0",
+        "#606060",
+        "#e0e0c0",
+        "#c0c0a0"
       ],
-      "score": 0.9248673443869428,
+      "score": 0.8809200687102141,
       "pass": true
     },
     {
-      "imagePath": "/home/runner/workspace/artifacts/api-server/output/sterling-silver-moonstone-necklace/9x16/final.png",
-      "productName": "Sterling Silver Moonstone Necklace",
+      "imagePath": "/home/runner/workspace/artifacts/api-server/output/energize-daily-face-serum/9x16/final.png",
+      "productName": "Energize Daily Face Serum",
       "aspectRatio": "9x16",
       "dominantColors": [
-        "#c0c0c0",
-        "#e0e0e0",
-        "#404040",
-        "#a0a0a0",
+        "#c0a080",
+        "#c0c0a0",
+        "#606060",
+        "#e0c0a0",
         "#e0c0c0"
       ],
-      "score": 0.9248673443869428,
+      "score": 0.8672978953060991,
       "pass": true
     },
     {
-      "imagePath": "/home/runner/workspace/artifacts/api-server/output/sterling-silver-moonstone-necklace/16x9/final.png",
-      "productName": "Sterling Silver Moonstone Necklace",
+      "imagePath": "/home/runner/workspace/artifacts/api-server/output/energize-daily-face-serum/16x9/final.png",
+      "productName": "Energize Daily Face Serum",
       "aspectRatio": "16x9",
       "dominantColors": [
-        "#c0c0c0",
-        "#a0a0a0",
-        "#e0e0e0",
-        "#404040",
-        "#606060"
+        "#c0a080",
+        "#e0c0c0",
+        "#606060",
+        "#404020",
+        "#e0c0a0"
       ],
-      "score": 0.9248673443869428,
+      "score": 0.9023834644417971,
       "pass": true
     },
     {
-      "imagePath": "/home/runner/workspace/artifacts/api-server/output/sterling-silver-hoop-earrings/1x1/final.png",
-      "productName": "Sterling Silver Hoop Earrings",
+      "imagePath": "/home/runner/workspace/artifacts/api-server/output/revive-night-repair-cream/1x1/final.png",
+      "productName": "Revive Night Repair Cream",
       "aspectRatio": "1x1",
       "dominantColors": [
-        "#e0e0e0",
-        "#c0c0a0",
-        "#606060",
-        "#c0a0a0",
-        "#c0c0c0"
-      ],
-      "score": 0.8830372790274658,
-      "pass": true
-    },
-    {
-      "imagePath": "/home/runner/workspace/artifacts/api-server/output/sterling-silver-hoop-earrings/9x16/final.png",
-      "productName": "Sterling Silver Hoop Earrings",
-      "aspectRatio": "9x16",
-      "dominantColors": [
-        "#e0e0e0",
-        "#c0c0a0",
-        "#606060",
+        "#404040",
         "#c0c0c0",
-        "#c0a0a0"
-      ],
-      "score": 0.8830372790274658,
-      "pass": true
-    },
-    {
-      "imagePath": "/home/runner/workspace/artifacts/api-server/output/sterling-silver-hoop-earrings/16x9/final.png",
-      "productName": "Sterling Silver Hoop Earrings",
-      "aspectRatio": "16x9",
-      "dominantColors": [
-        "#e0e0e0",
         "#606060",
-        "#c0c0c0",
-        "#202020",
+        "#e0e0e0",
         "#a0a0a0"
       ],
-      "score": 0.9666974097464199,
+      "score": 0.9353226902799238,
+      "pass": true
+    },
+    {
+      "imagePath": "/home/runner/workspace/artifacts/api-server/output/revive-night-repair-cream/9x16/final.png",
+      "productName": "Revive Night Repair Cream",
+      "aspectRatio": "9x16",
+      "dominantColors": [
+        "#c0c0c0",
+        "#404040",
+        "#606060",
+        "#e0e0e0",
+        "#a0a0a0"
+      ],
+      "score": 0.9353226902799238,
+      "pass": true
+    },
+    {
+      "imagePath": "/home/runner/workspace/artifacts/api-server/output/revive-night-repair-cream/16x9/final.png",
+      "productName": "Revive Night Repair Cream",
+      "aspectRatio": "16x9",
+      "dominantColors": [
+        "#404040",
+        "#c0c0c0",
+        "#606060",
+        "#e0e0e0",
+        "#202020"
+      ],
+      "score": 0.9353226902799238,
       "pass": true
     }
   ],
   "logoCompliance": [
     {
-      "imagePath": "/home/runner/workspace/artifacts/api-server/output/sterling-silver-moonstone-necklace/1x1/final.png",
-      "productName": "Sterling Silver Moonstone Necklace",
+      "imagePath": "/home/runner/workspace/artifacts/api-server/output/energize-daily-face-serum/1x1/final.png",
+      "productName": "Energize Daily Face Serum",
+      "aspectRatio": "1x1",
+      "logoPresent": true,
+      "reasoning": "The image contains the 'VITARA NATURALS' brand name and logo (a leaf symbol) on the product bottle label, and there is also brand tagline text 'Science-backed. Nature-inspired.' overlaid on the image."
+    },
+    {
+      "imagePath": "/home/runner/workspace/artifacts/api-server/output/energize-daily-face-serum/9x16/final.png",
+      "productName": "Energize Daily Face Serum",
+      "aspectRatio": "9x16",
+      "logoPresent": true,
+      "reasoning": "The image clearly shows the 'VITARA NATURALS' brand name and logo (featuring a leaf design) on the product bottle label, along with product text 'ENERGIZE DAILY FACE SERUM' and tagline 'Science-backed. Nature-inspired.' at the bottom."
+    },
+    {
+      "imagePath": "/home/runner/workspace/artifacts/api-server/output/energize-daily-face-serum/16x9/final.png",
+      "productName": "Energize Daily Face Serum",
+      "aspectRatio": "16x9",
+      "logoPresent": true,
+      "reasoning": "The image shows a clear brand logo and text reading 'VITARA NATURALS' on the product bottle label, along with a leaf icon above the text."
+    },
+    {
+      "imagePath": "/home/runner/workspace/artifacts/api-server/output/revive-night-repair-cream/1x1/final.png",
+      "productName": "Revive Night Repair Cream",
       "aspectRatio": "1x1",
       "logoPresent": false,
-      "reasoning": "The image shows a moonstone pendant necklace on white jewelry boxes with the text 'Carry your story.' at the bottom. This text appears to be a marketing tagline or caption added to the image rather than a visible brand logo, watermark, or text logo embedded in the photograph itself."
+      "reasoning": "The image shows a product label for 'VITARA NATURALS Revive Night Repair Cream' which is the product's own packaging text, not a separate brand logo, text logo, or watermark overlaid on the image. The tagline 'Science-backed. Nature-inspired.' appears to be part of the marketing presentation rather than a watermark."
     },
     {
-      "imagePath": "/home/runner/workspace/artifacts/api-server/output/sterling-silver-moonstone-necklace/9x16/final.png",
-      "productName": "Sterling Silver Moonstone Necklace",
+      "imagePath": "/home/runner/workspace/artifacts/api-server/output/revive-night-repair-cream/9x16/final.png",
+      "productName": "Revive Night Repair Cream",
       "aspectRatio": "9x16",
-      "logoPresent": false,
-      "reasoning": "The image shows a moonstone pendant necklace on a white display stand with the tagline 'Carry your story.' at the bottom. There is no visible brand logo, text logo, or watermark on the image itself - only the marketing tagline which is part of the advertisement design rather than a watermark."
+      "logoPresent": true,
+      "reasoning": "The product label clearly shows 'VITARA NATURALS' as the brand name on the cream jar, which serves as both a brand identifier and product labeling. Additionally, the tagline 'Science-backed. Nature-inspired.' appears at the bottom of the image, which functions as branded text/messaging."
     },
     {
-      "imagePath": "/home/runner/workspace/artifacts/api-server/output/sterling-silver-moonstone-necklace/16x9/final.png",
-      "productName": "Sterling Silver Moonstone Necklace",
+      "imagePath": "/home/runner/workspace/artifacts/api-server/output/revive-night-repair-cream/16x9/final.png",
+      "productName": "Revive Night Repair Cream",
       "aspectRatio": "16x9",
-      "logoPresent": false,
-      "reasoning": "The image shows a necklace with a moonstone pendant on a white surface with the text 'Carry your story.' overlaid at the bottom. There is no visible brand logo, text logo, or watermark present in the image."
-    },
-    {
-      "imagePath": "/home/runner/workspace/artifacts/api-server/output/sterling-silver-hoop-earrings/1x1/final.png",
-      "productName": "Sterling Silver Hoop Earrings",
-      "aspectRatio": "1x1",
-      "logoPresent": false,
-      "reasoning": "The image shows silver hoop earrings on a white display surface with a black triangular object in the background. The only text visible is 'Carry your story.' at the bottom, which appears to be a tagline or caption rather than a brand logo or watermark overlaid on the image."
-    },
-    {
-      "imagePath": "/home/runner/workspace/artifacts/api-server/output/sterling-silver-hoop-earrings/9x16/final.png",
-      "productName": "Sterling Silver Hoop Earrings",
-      "aspectRatio": "9x16",
-      "logoPresent": false,
-      "reasoning": "The image shows silver hoop earrings on a white surface with only the text 'Carry your story.' at the bottom. There is no brand logo, text logo, or watermark visible in the image."
-    },
-    {
-      "imagePath": "/home/runner/workspace/artifacts/api-server/output/sterling-silver-hoop-earrings/16x9/final.png",
-      "productName": "Sterling Silver Hoop Earrings",
-      "aspectRatio": "16x9",
-      "logoPresent": false,
-      "reasoning": "The image shows only a pair of silver hoop earrings on a white surface with the text 'Carry your story.' at the bottom. There is no visible brand logo, text logo, or watermark present in the image."
+      "logoPresent": true,
+      "reasoning": "The text 'VITARA NATURALS' is visible on the product jar/container in the image, which serves as a brand logo/text logo."
     }
   ],
   "legalCompliance": {

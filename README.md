@@ -6,6 +6,30 @@ A creative automation pipeline for social ad campaigns. Upload a campaign brief 
 
 ---
 
+## Quick Start
+
+This project uses **pnpm** workspaces. `npm install` is blocked by a preinstall guard.
+
+```bash
+# 1. Install
+pnpm install
+
+# 2. Configure environment
+cp .env.example .env
+# Edit .env and set ANTHROPIC_API_KEY and GEMINI_API_KEY
+
+# 3. Start both services (API on :5000, frontend on :5173)
+pnpm run dev
+```
+
+Open `http://localhost:5173`.
+
+The `pnpm run dev` command starts both services concurrently using the ports above. The vite frontend config reads `PORT` from the environment and will throw if it is not set - the root `dev` script handles this automatically.
+
+> **On Replit**: Both services start via the workflow panel. No API keys needed - AI Integrations provides Anthropic and Gemini credentials automatically.
+
+---
+
 ## Overview
 
 Global consumer goods companies launch hundreds of localized campaigns monthly. Manually producing each creative variant - multiple products x multiple aspect ratios x multiple markets - is slow, inconsistent, and expensive. This pipeline automates the entire creative production loop: from a structured campaign brief to a complete set of compliance-verified, overlay-rendered ad images in a single API call.
@@ -33,7 +57,7 @@ CampaignBrief (YAML/JSON)
         |              - loadExistingAsset: copy reused image into output tree
         v              - generateAssetWithGenAI: Claude writes prompt, Gemini renders
 +------------------+
-| 3. renderRatios  |  Sharp resize to 1:1 (1080x1080), 9:16 (1080x1920), 16:9 (1920x1080)
+| 3. renderRatios  |  Sharp resize: 1:1 (1080x1080), 9:16 (1080x1920), 16:9 (1920x1080)
 +------------------+
         |
         v
@@ -42,36 +66,35 @@ CampaignBrief (YAML/JSON)
 +------------------+  Font scales down iteratively until text fits without overflow
         |
         v
-+------------------+
-| 5. organizeOutputs| StorageAdapter.save() per file, write manifest.json
-+------------------+
++--------------------+
+| 5. organizeOutputs |  StorageAdapter.save() per file, write manifest.json
++--------------------+
         |
         v
 +------------------+
-| 6. checkCompliance| ComplianceChecker agent
+| 6. checkCompliance|  ComplianceChecker agent
 +------------------+  - extractColors: pixel sampling vs brand palette
         |              - checkLogoPresence: Claude vision per final image
         v              - legal scan: regex against prohibitedWords list
 manifest.json + compliance.json + final.png x (products x ratios)
 
 
-Cross-cutting concerns (apply to every step):
-+--------------------+     +-------------------------------+
-| Pino structured    |     | StorageAdapter                |
-| logger             |     | (step 5 only, but pluggable)  |
-|                    |     |                               |
-| - tokens per call  |     | local  -> output/ on disk     |
-| - costUSD per call |     | dropbox -> Dropbox shared URL |
-| - latencyMs        |     | s3     -> scaffolded          |
-| - logs/run-*.json  |     | azure  -> scaffolded          |
-+--------------------+     +-------------------------------+
+Cross-cutting concerns (every step):
++----------------------+     +------------------------------+
+| Pino structured log  |     | StorageAdapter (step 5)      |
+|                      |     |                              |
+| - tokens per call    |     | local  -> output/ on disk    |
+| - costUSD per call   |     | dropbox -> Dropbox shared URL|
+| - latencyMs          |     | s3     -> scaffolded         |
+| - logs/run-*.json    |     | azure  -> scaffolded         |
++----------------------+     +------------------------------+
 ```
 
 ### Agent Design Philosophy
 
 **Bounded responsibilities** - Each agent has one job. AssetGatherer coordinates image sourcing. ComplianceChecker verifies output quality. Neither does both.
 
-**Strict tool contracts** - Agents operate through explicit tools with typed interfaces. Each tool handles its own error cases and never throws silently.
+**Strict tool contracts** - Agents operate through explicit tools with typed interfaces. Each tool handles its own error cases and never fails silently.
 
 **Polling-based progress** - The workflow emits progress events via an internal ProgressBus (EventEmitter) that updates an in-memory RunState. `POST /api/generate` returns `{runId}` immediately; the frontend polls `GET /api/run/:runId/status` every 750 ms. SSE was the original design but the Replit reverse proxy buffers all chunks until the response closes, making true streaming impossible through the proxy.
 
@@ -101,51 +124,25 @@ Cross-cutting concerns (apply to every step):
 - Node.js 20+
 - pnpm 9+
 - Anthropic API key (for text generation and vision calls)
-- Google Gemini access (via Replit AI Integrations, or a `GEMINI_API_KEY` directly)
-
-### Installation
-
-```bash
-git clone <repo-url>
-cd <repo-dir>
-pnpm install
-```
+- Google Gemini API key (for image generation; provided automatically on Replit)
 
 ### Environment Variables
 
-Create `artifacts/api-server/.env`:
+Copy `.env.example` to `.env` and fill in your values:
 
 ```env
-# Required when running locally (outside Replit)
-ANTHROPIC_API_KEY=sk-ant-...
+# Required
+ANTHROPIC_API_KEY=sk-ant-api03-...
+GEMINI_API_KEY=AIza...
+PORT=5000
 
-# Storage backend - defaults to "local" if unset
+# Optional - storage backend (default: local)
 STORAGE_ADAPTER=local
 # STORAGE_ADAPTER=dropbox
-# DROPBOX_ACCESS_TOKEN=your_dropbox_token_here
-
-PORT=5000
+# DROPBOX_ACCESS_TOKEN=your_token_here
 ```
 
-> **Running on Replit**: No API keys needed. The Replit AI Integrations proxy is configured automatically for both Anthropic and Gemini.
-
-> **Running locally**: Set `ANTHROPIC_API_KEY`. Image generation uses the Replit-managed Gemini integration and requires additional configuration outside Replit.
-
-### Run
-
-The frontend vite config reads `PORT` from the environment and throws if it is not set. Both services must be started with explicit port values:
-
-```bash
-# Terminal 1 - API server (any available port)
-PORT=5000 pnpm --filter @workspace/api-server run dev
-
-# Terminal 2 - Frontend
-PORT=5173 pnpm --filter @workspace/frontend run dev
-```
-
-Open `http://localhost:5173` in your browser. The API server is reached via the vite proxy at `/api`.
-
-On Replit, both ports are assigned automatically by the workflow config and the preview pane opens the correct URL. The `PORT=...` prefix is only needed for manual local runs.
+On Replit, `ANTHROPIC_API_KEY` and `GEMINI_API_KEY` are provided automatically by AI Integrations. No manual configuration needed.
 
 ---
 
@@ -184,7 +181,7 @@ products:
     existingAssetPath: "./briefs/assets/energize-serum.png"
 ```
 
-The AssetGatherer agent loads the file directly - no AI call, no cost - and stamps `generationMethod: "reused"` in the manifest. If the path is invalid or the file is missing, the agent logs a warning and falls back to Gemini generation automatically, stamping `generationMethod: "fallback_to_generated"`.
+The AssetGatherer agent loads the file directly - no AI call, no cost - and stamps `generationMethod: "reused"` in the manifest. If the path is invalid or the file is missing, the agent logs a warning and falls back to Gemini generation automatically.
 
 ---
 
@@ -281,24 +278,29 @@ With Dropbox active, `url` becomes a `https://www.dropbox.com/s/...?dl=1` direct
 }
 ```
 
-### Output: Run Report (from UI, actual figures)
+### Output: Run Report (verified against actual runs)
 
-A typical 2-product generate run:
+A 2-product generate run (Vitara Naturals brief, measured):
 
-| Metric | Value |
+| Metric | Actual value |
 |---|---|
-| Total AI cost | $0.04-$0.05 |
-| Run duration | 55-65 seconds |
-| AI calls | 10 (2 Claude prompt crafts + 2 Gemini image gens + 6 Claude vision checks) |
-| Input tokens | ~9,000-11,000 |
-| Output tokens | ~700-950 |
+| Total AI cost | $0.043 |
+| Run duration | 56 seconds |
+| AI calls | 10 |
+| Input tokens | 9,901 |
+| Output tokens | 886 |
 
-Cost breakdown by call type:
-- Claude prompt crafting (x2): ~$0.003-$0.004 each
-- Gemini image generation (x2): $0 reported (Replit integration does not return billing data)
-- Claude vision logo check (x6): ~$0.006 each
+Per-call breakdown (10 calls total):
 
-For reuse runs (existing images provided), the two Claude prompt crafting calls and both Gemini image generation calls are skipped. Only the six compliance vision calls run, reducing cost to approximately $0.035-$0.040.
+| Call | Count | Cost each | Subtotal |
+|---|---|---|---|
+| Claude prompt crafting (gatherAssets) | 2 | ~$0.0035 | ~$0.007 |
+| Gemini image generation (gatherAssets) | 2 | $0.00 reported | $0.00 |
+| Claude vision logo check (checkCompliance) | 6 | ~$0.006 | ~$0.036 |
+
+Gemini image generation cost is not returned by the Replit-managed integration and is displayed as $0. Actual Gemini billing occurs on the Replit account and is not currently tracked per-run.
+
+For reuse runs (existing images provided), the 2 Claude prompt crafts and 2 Gemini calls are skipped. Only the 6 compliance vision calls run, reducing total cost to approximately $0.036.
 
 ---
 
@@ -324,14 +326,16 @@ The pipeline uses a `StorageAdapter` interface with `save()`, `load()`, `exists(
 
 **Why Dropbox over S3 or Azure**: The customer's workflow is creative-team-led. Marketing and creative teams at consumer goods companies consume assets in Dropbox-class shared storage - they share folders, send links to agencies, and drag files into layouts. They do not open S3 consoles or navigate Azure Blob containers. S3 and Azure remain scaffolded as engineering-side additions for observability pipelines or hybrid dual-write architectures. The chosen adapter reflects user workflow, not just technical preference.
 
-Switch between backends via a single environment variable:
+Switch backends with a single environment variable - no code changes:
 
 ```env
 STORAGE_ADAPTER=local     # default, no token needed
-STORAGE_ADAPTER=dropbox   # requires DROPBOX_ACCESS_TOKEN
+STORAGE_ADAPTER=dropbox   # also set DROPBOX_ACCESS_TOKEN
 ```
 
 The Dropbox adapter applies the same retry logic used for Gemini image generation: 3 attempts, exponential backoff with +/-20% jitter, retry on 429/5xx/network errors, no retry on 400/401/403.
+
+**Dropbox implementation status**: The adapter is fully implemented and the local regression path is verified. The cloud upload path requires a live `DROPBOX_ACCESS_TOKEN` to test end-to-end against the Dropbox API.
 
 ### 4. Frontend observability - Run Report panel
 
@@ -418,3 +422,4 @@ jq 'select(.adapter == "dropbox")' logs/run-*.json
 - **Image model**: `gemini-2.5-flash-image` via Replit AI Integrations. Adobe Firefly is the production target - one function swap in `generateAssetWithGenAI.ts`.
 - **Gemini cost**: The Replit-managed Gemini integration does not return billing data. Image generation cost is logged as $0 and shown as `--` in the Run Report.
 - **Run store**: In-memory with a 1-hour TTL. Restarting the API server loses all in-flight run states.
+- **pnpm required**: The workspace uses pnpm. `npm install` is blocked by a preinstall guard. Use `pnpm install` and `pnpm run dev`.
