@@ -18,15 +18,6 @@ type CampaignBrief = {
   logoPath?: string;
 };
 
-type ProgressEvent = {
-  type: "started" | "progress" | "complete" | "error";
-  step?: string;
-  status?: "running" | "complete" | "error";
-  message?: string;
-  error?: string;
-  manifest?: unknown;
-  complianceReport?: unknown;
-};
 
 type PipelineStatus = "idle" | "running" | "done" | "error";
 
@@ -506,13 +497,15 @@ export default function App() {
   const [manifest, setManifest] = useState<any>(null);
   const [complianceReport, setComplianceReport] = useState<any>(null);
 
-  const { refetch: refetchManifest } = useGetManifest({ query: { enabled: false, queryKey: ["manifest"] } });
-  const { refetch: refetchCompliance } = useGetCompliance({ query: { enabled: false, queryKey: ["compliance"] } });
-
   const BASE = import.meta.env.BASE_URL.replace(/\/$/, "");
+
+  const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const runPipeline = useCallback(async () => {
     if (!brief) return;
+
+    if (pollRef.current) clearInterval(pollRef.current);
+
     setStatus("running");
     setSteps({});
     setErrorMessage(null);
@@ -529,50 +522,47 @@ export default function App() {
         body: JSON.stringify(payload),
       });
 
-      if (!res.ok || !res.body) throw new Error(`Server error: ${res.status}`);
+      if (!res.ok) throw new Error(`Server error: ${res.status}`);
+      const { runId } = await res.json() as { runId: string };
 
-      const reader = res.body.getReader();
-      const decoder = new TextDecoder();
-      let buffer = "";
+      pollRef.current = setInterval(async () => {
+        try {
+          const statusRes = await fetch(`${BASE}/api/run/${runId}/status`);
+          if (!statusRes.ok) return;
+          const state = await statusRes.json() as {
+            steps: Record<string, "running" | "complete" | "error">;
+            currentMessage: string;
+            status: "running" | "done" | "error";
+            manifest?: unknown;
+            complianceReport?: unknown;
+            error?: string;
+          };
 
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-        buffer += decoder.decode(value, { stream: true });
-        const parts = buffer.split("\n\n");
-        buffer = parts.pop() ?? "";
+          setSteps({ ...state.steps });
+          if (state.currentMessage) setCurrentMessage(state.currentMessage);
 
-        for (const part of parts) {
-          if (!part.startsWith("data: ")) continue;
-          try {
-            const event: ProgressEvent = JSON.parse(part.slice(6));
-            if (event.type === "progress") {
-              if (event.step && event.status) {
-                setSteps((prev) => ({ ...prev, [event.step!]: event.status as "running" | "complete" | "error" }));
-              }
-              if (event.message) setCurrentMessage(event.message);
-            } else if (event.type === "complete") {
-              setSteps(() => Object.fromEntries(ALL_STEPS.map((s) => [s, "complete" as const])));
-              setManifest(event.manifest);
-              setComplianceReport(event.complianceReport);
-              setStatus("done");
-              setCurrentMessage("Pipeline complete");
-              refetchManifest();
-              refetchCompliance();
-            } else if (event.type === "error") {
-              setErrorMessage(event.error ?? "Unknown error");
-              setStatus("error");
-            }
-          } catch { /* ignore malformed SSE */ }
-        }
-      }
+          if (state.status === "done") {
+            clearInterval(pollRef.current!);
+            pollRef.current = null;
+            setSteps(() => Object.fromEntries(ALL_STEPS.map((s) => [s, "complete" as const])));
+            setManifest(state.manifest);
+            setComplianceReport(state.complianceReport);
+            setStatus("done");
+            setCurrentMessage("Pipeline complete");
+          } else if (state.status === "error") {
+            clearInterval(pollRef.current!);
+            pollRef.current = null;
+            setErrorMessage(state.error ?? "Unknown error");
+            setStatus("error");
+          }
+        } catch { /* ignore transient network errors */ }
+      }, 750);
 
-      if (status === "running") setStatus("done");
     } catch (err) {
       setErrorMessage(err instanceof Error ? err.message : String(err));
       setStatus("error");
     }
-  }, [brief, logoServerPath, BASE, refetchManifest, refetchCompliance, status]);
+  }, [brief, logoServerPath, BASE]);
 
   return (
     <div className="min-h-screen bg-white">

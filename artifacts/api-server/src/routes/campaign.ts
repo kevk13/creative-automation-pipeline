@@ -7,8 +7,13 @@ import { CampaignBriefSchema } from "../schemas/campaignBrief.js";
 import { progressBus, type ProgressEvent } from "../progress-bus.js";
 import { logStep, logStepError } from "../campaign-logger.js";
 import { OUTPUT_DIR, BRIEFS_DIR } from "../lib/paths.js";
+import { createRun, getRun, updateRunStep, completeRun, errorRun } from "../lib/runStore.js";
 
 const router = Router();
+
+progressBus.on("progress", (event: ProgressEvent) => {
+  updateRunStep(event.runId, event.step, event.status, event.message);
+});
 
 router.get("/samples", (_req, res) => {
   try {
@@ -39,77 +44,52 @@ router.get("/samples/:filename", (req, res) => {
 });
 
 router.post("/generate", async (req, res) => {
-  const runId = crypto.randomUUID();
-
-  res.setHeader("Content-Type", "text/event-stream");
-  res.setHeader("Cache-Control", "no-cache");
-  res.setHeader("Connection", "keep-alive");
-  res.setHeader("X-Accel-Buffering", "no");
-  res.flushHeaders();
-
-  const send = (data: object) => {
-    res.write(`data: ${JSON.stringify(data)}\n\n`);
-    if (typeof (res as any).flush === "function") (res as any).flush();
-  };
-
-  const progressHandler = (event: ProgressEvent) => {
-    if (event.runId === runId) {
-      send({ type: "progress", ...event });
-    }
-  };
-
-  progressBus.on("progress", progressHandler);
-
-  const cleanup = () => {
-    progressBus.off("progress", progressHandler);
-  };
-
-  req.on("close", cleanup);
-
   try {
     const briefData = CampaignBriefSchema.parse(req.body);
+    const runId = crypto.randomUUID();
+    createRun(runId);
 
     logStep("campaign-route", "Starting workflow run", {
       runId,
       clientName: briefData.clientName,
     });
 
-    send({ type: "started", runId, message: "Pipeline started" });
+    (async () => {
+      try {
+        const run = campaignWorkflow.createRun();
+        const result = await run.start({
+          inputData: { runId, input: "", isFilePath: false, briefData },
+        });
 
-    const run = campaignWorkflow.createRun();
-    const result = await run.start({
-      inputData: {
-        runId,
-        input: "",
-        isFilePath: false,
-        briefData,
-      },
-    });
+        if (result.error) {
+          errorRun(runId, result.error);
+          logStepError("campaign-route", new Error(result.error), { runId });
+          return;
+        }
 
-    cleanup();
+        const finalResult = result.results as any;
+        completeRun(runId, finalResult.manifest, finalResult.complianceReport);
+        logStep("campaign-route", "Workflow completed", { runId });
+      } catch (err) {
+        errorRun(runId, err instanceof Error ? err.message : String(err));
+        logStepError("campaign-route", err, { runId });
+      }
+    })();
 
-    if (result.error) {
-      send({ type: "error", runId, error: result.error });
-      res.end();
-      return;
-    }
-
-    const finalResult = result.results as any;
-    send({
-      type: "complete",
-      runId,
-      manifest: finalResult.manifest,
-      complianceReport: finalResult.complianceReport,
-    });
-
-    logStep("campaign-route", "Workflow completed", { runId });
+    res.json({ runId });
   } catch (err) {
-    cleanup();
-    logStepError("campaign-route", err, { runId });
-    send({ type: "error", runId, error: err instanceof Error ? err.message : String(err) });
-  } finally {
-    res.end();
+    logStepError("campaign-route", err, {});
+    res.status(400).json({ error: err instanceof Error ? err.message : String(err) });
   }
+});
+
+router.get("/run/:runId/status", (req, res) => {
+  const state = getRun(req.params.runId);
+  if (!state) {
+    res.status(404).json({ error: "Run not found" });
+    return;
+  }
+  res.json(state);
 });
 
 router.get("/manifest", (_req, res) => {
