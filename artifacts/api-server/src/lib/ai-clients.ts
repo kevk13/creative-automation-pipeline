@@ -59,5 +59,5 @@ export function validateAiClients(): void {
   }
 }
 
-export const IMAGE_MODEL = "gpt-image-1";
+export const IMAGE_MODEL = "gemini-2.5-flash-image";
 export const TEXT_MODEL = "claude-sonnet-4-5";
