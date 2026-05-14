@@ -1,5 +1,6 @@
 import fs from "fs";
 import path from "path";
+import { generateImage } from "@workspace/integrations-gemini-ai/image";
 import { createAnthropicClient, TEXT_MODEL } from "../lib/ai-clients.js";
 import { calcClaudeCost, logStep } from "../campaign-logger.js";
 import type { Product, CampaignBrief } from "../schemas/campaignBrief.js";
@@ -68,7 +69,6 @@ Return ONLY the image generation prompt, nothing else.`,
   const imagePrompt =
     promptResponse.content[0].type === "text" ? promptResponse.content[0].text : "";
 
-  const { generateImage } = await import("@workspace/integrations-gemini-ai/image");
   const { b64_json } = await generateImage(imagePrompt);
 
   logStep("generateAssetWithGenAI", "Image generated", {
