@@ -1,59 +1,89 @@
 {
-  "generatedAt": "2026-05-14T18:10:12.587Z",
+  "generatedAt": "2026-05-14T18:21:26.513Z",
   "entries": [
     {
       "productName": "Energize Daily Face Serum",
       "productSlug": "energize-daily-face-serum",
       "aspectRatio": "1x1",
       "filePath": "/home/runner/workspace/artifacts/api-server/output/energize-daily-face-serum/1x1/final.png",
-      "fileSize": 1438730,
-      "generationTimestamp": "2026-05-14T18:10:12.587Z",
-      "generationMethod": "gemini-2.5-flash-image"
+      "fileSize": 1339437,
+      "generationTimestamp": "2026-05-14T18:21:26.513Z",
+      "generationMethod": "gemini-2.5-flash-image",
+      "url": "/home/runner/workspace/artifacts/api-server/output/energize-daily-face-serum/1x1/final.png",
+      "adapter": "local",
+      "uploadStatus": "success",
+      "uploadedAt": "2026-05-14T18:21:26.513Z",
+      "bytes": 1339437
     },
     {
       "productName": "Energize Daily Face Serum",
       "productSlug": "energize-daily-face-serum",
       "aspectRatio": "9x16",
       "filePath": "/home/runner/workspace/artifacts/api-server/output/energize-daily-face-serum/9x16/final.png",
-      "fileSize": 2149865,
-      "generationTimestamp": "2026-05-14T18:10:12.587Z",
-      "generationMethod": "gemini-2.5-flash-image"
+      "fileSize": 1869271,
+      "generationTimestamp": "2026-05-14T18:21:26.513Z",
+      "generationMethod": "gemini-2.5-flash-image",
+      "url": "/home/runner/workspace/artifacts/api-server/output/energize-daily-face-serum/9x16/final.png",
+      "adapter": "local",
+      "uploadStatus": "success",
+      "uploadedAt": "2026-05-14T18:21:26.515Z",
+      "bytes": 1869271
     },
     {
       "productName": "Energize Daily Face Serum",
       "productSlug": "energize-daily-face-serum",
       "aspectRatio": "16x9",
       "filePath": "/home/runner/workspace/artifacts/api-server/output/energize-daily-face-serum/16x9/final.png",
-      "fileSize": 1618221,
-      "generationTimestamp": "2026-05-14T18:10:12.587Z",
-      "generationMethod": "gemini-2.5-flash-image"
+      "fileSize": 1438658,
+      "generationTimestamp": "2026-05-14T18:21:26.513Z",
+      "generationMethod": "gemini-2.5-flash-image",
+      "url": "/home/runner/workspace/artifacts/api-server/output/energize-daily-face-serum/16x9/final.png",
+      "adapter": "local",
+      "uploadStatus": "success",
+      "uploadedAt": "2026-05-14T18:21:26.516Z",
+      "bytes": 1438658
     },
     {
       "productName": "Revive Night Repair Cream",
       "productSlug": "revive-night-repair-cream",
       "aspectRatio": "1x1",
       "filePath": "/home/runner/workspace/artifacts/api-server/output/revive-night-repair-cream/1x1/final.png",
-      "fileSize": 1235449,
-      "generationTimestamp": "2026-05-14T18:10:12.587Z",
-      "generationMethod": "gemini-2.5-flash-image"
+      "fileSize": 1368429,
+      "generationTimestamp": "2026-05-14T18:21:26.513Z",
+      "generationMethod": "gemini-2.5-flash-image",
+      "url": "/home/runner/workspace/artifacts/api-server/output/revive-night-repair-cream/1x1/final.png",
+      "adapter": "local",
+      "uploadStatus": "success",
+      "uploadedAt": "2026-05-14T18:21:26.517Z",
+      "bytes": 1368429
     },
     {
       "productName": "Revive Night Repair Cream",
       "productSlug": "revive-night-repair-cream",
       "aspectRatio": "9x16",
       "filePath": "/home/runner/workspace/artifacts/api-server/output/revive-night-repair-cream/9x16/final.png",
-      "fileSize": 1630036,
-      "generationTimestamp": "2026-05-14T18:10:12.587Z",
-      "generationMethod": "gemini-2.5-flash-image"
+      "fileSize": 1718651,
+      "generationTimestamp": "2026-05-14T18:21:26.513Z",
+      "generationMethod": "gemini-2.5-flash-image",
+      "url": "/home/runner/workspace/artifacts/api-server/output/revive-night-repair-cream/9x16/final.png",
+      "adapter": "local",
+      "uploadStatus": "success",
+      "uploadedAt": "2026-05-14T18:21:26.518Z",
+      "bytes": 1718651
     },
     {
       "productName": "Revive Night Repair Cream",
       "productSlug": "revive-night-repair-cream",
       "aspectRatio": "16x9",
       "filePath": "/home/runner/workspace/artifacts/api-server/output/revive-night-repair-cream/16x9/final.png",
-      "fileSize": 1295812,
-      "generationTimestamp": "2026-05-14T18:10:12.587Z",
-      "generationMethod": "gemini-2.5-flash-image"
+      "fileSize": 1707878,
+      "generationTimestamp": "2026-05-14T18:21:26.513Z",
+      "generationMethod": "gemini-2.5-flash-image",
+      "url": "/home/runner/workspace/artifacts/api-server/output/revive-night-repair-cream/16x9/final.png",
+      "adapter": "local",
+      "uploadStatus": "success",
+      "uploadedAt": "2026-05-14T18:21:26.520Z",
+      "bytes": 1707878
     }
   ]
 }

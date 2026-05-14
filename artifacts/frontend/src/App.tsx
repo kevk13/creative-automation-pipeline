@@ -399,6 +399,13 @@ function ResultsGallery({ manifest, complianceReport }: { manifest: any; complia
   const BASE = import.meta.env.BASE_URL.replace(/\/$/, "");
 
   type GenerationMethod = "reused" | "gemini-2.5-flash-image" | "fallback_to_generated" | string;
+  // Look up manifest entry per (productSlug, aspectRatio) for URL and adapter info
+  const entryMap: Record<string, Record<string, any>> = {};
+  for (const entry of manifest?.entries ?? []) {
+    if (!entryMap[entry.productSlug]) entryMap[entry.productSlug] = {};
+    entryMap[entry.productSlug]![entry.aspectRatio] = entry;
+  }
+
   const byProduct: Record<string, { productName: string; productSlug: string; ratios: Ratio[]; generationMethod: GenerationMethod }> = {};
   for (const entry of manifest?.entries ?? []) {
     if (!byProduct[entry.productSlug]) {
@@ -451,7 +458,15 @@ function ResultsGallery({ manifest, complianceReport }: { manifest: any; complia
                     <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors" />
                   </div>
                   <div className="text-xs text-center text-slate-500 font-medium">{RATIO_LABELS[ratio] ?? ratio}</div>
-                  <a href={getImageUrl(product.productSlug, ratio)} download={`${product.productSlug}-${ratio}.png`}
+                  <a
+                    href={
+                      entryMap[product.productSlug]?.[ratio]?.adapter === "dropbox"
+                        ? entryMap[product.productSlug]?.[ratio]?.url
+                        : getImageUrl(product.productSlug, ratio)
+                    }
+                    download={`${product.productSlug}-${ratio}.png`}
+                    target={entryMap[product.productSlug]?.[ratio]?.adapter === "dropbox" ? "_blank" : undefined}
+                    rel="noreferrer"
                     className="block text-center text-xs text-slate-500 hover:text-slate-700 underline"
                     onClick={(e) => e.stopPropagation()}>
                     Download
@@ -657,6 +672,20 @@ export default function App() {
               <div className="bg-slate-50 border border-slate-200 rounded-lg p-4 space-y-4">
                 {currentMessage && <p className="text-sm text-slate-600 font-medium">{currentMessage}</p>}
                 <ProgressBar steps={steps} />
+                {status === "done" && manifest && (() => {
+                  const adapterName = manifest.entries?.[0]?.adapter ?? "local";
+                  const isCloud = adapterName !== "local";
+                  return (
+                    <div className="flex items-center gap-2 pt-1 border-t border-slate-200">
+                      <span className="text-xs text-slate-400 font-medium">Storage</span>
+                      <span className={`text-xs px-2 py-0.5 rounded-full font-semibold ${
+                        isCloud ? "bg-blue-100 text-blue-700" : "bg-slate-100 text-slate-500"
+                      }`}>
+                        {adapterName === "dropbox" ? "Dropbox" : "Local filesystem"}
+                      </span>
+                    </div>
+                  );
+                })()}
               </div>
             )}
 
