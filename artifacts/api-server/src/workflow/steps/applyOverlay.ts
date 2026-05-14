@@ -22,31 +22,69 @@ const OverlayOutputSchema = z.object({
   outputDir: z.string(),
 });
 
-function buildSvgOverlay(width: number, height: number, message: string): Buffer {
-  const fontSize = Math.round(width * 0.055);
-  const barHeight = Math.round(height * 0.15);
-  const barY = height - barHeight;
-  const textY = barY + Math.round(barHeight * 0.62);
-
-  const escapedMessage = message
+function escapeXml(s: string): string {
+  return s
     .replace(/&/g, "&amp;")
     .replace(/</g, "&lt;")
     .replace(/>/g, "&gt;")
     .replace(/"/g, "&quot;");
+}
 
-  const svg = `<svg width="${width}" height="${height}" xmlns="http://www.w3.org/2000/svg">
-    <rect x="0" y="${barY}" width="${width}" height="${barHeight}" fill="rgba(0,0,0,0.55)" />
-    <text
+function wrapWords(message: string, maxLineWidth: number, charWidth: number): string[] {
+  const words = message.split(/\s+/);
+  const lines: string[] = [];
+  let current = "";
+
+  for (const word of words) {
+    const candidate = current ? `${current} ${word}` : word;
+    if (candidate.length * charWidth > maxLineWidth && current) {
+      lines.push(current);
+      current = word;
+    } else {
+      current = candidate;
+    }
+  }
+  if (current) lines.push(current);
+  return lines;
+}
+
+function buildSvgOverlay(width: number, height: number, message: string): Buffer {
+  const fontSize = Math.round(width * 0.055);
+  const charWidth = fontSize * 0.56;
+  const maxLineWidth = width * 0.88;
+  const lineHeight = Math.round(fontSize * 1.3);
+
+  const lines = wrapWords(message, maxLineWidth, charWidth);
+  const numLines = lines.length;
+
+  const vertPad = Math.round(fontSize * 0.7);
+  const barHeight = Math.max(
+    Math.round(height * 0.15),
+    numLines * lineHeight + vertPad * 2
+  );
+  const barY = height - barHeight;
+
+  const blockTop = barY + Math.round((barHeight - numLines * lineHeight) / 2) + Math.round(lineHeight * 0.75);
+
+  const textEls = lines
+    .map(
+      (line, i) =>
+        `<text
       x="${width / 2}"
-      y="${textY}"
+      y="${blockTop + i * lineHeight}"
       font-family="Arial, Helvetica, sans-serif"
       font-size="${fontSize}"
       font-weight="600"
       fill="white"
       text-anchor="middle"
-      dominant-baseline="middle"
-      letter-spacing="2"
-    >${escapedMessage}</text>
+      letter-spacing="1"
+    >${escapeXml(line)}</text>`
+    )
+    .join("\n");
+
+  const svg = `<svg width="${width}" height="${height}" xmlns="http://www.w3.org/2000/svg">
+    <rect x="0" y="${barY}" width="${width}" height="${barHeight}" fill="rgba(0,0,0,0.55)" />
+    ${textEls}
   </svg>`;
 
   return Buffer.from(svg);
