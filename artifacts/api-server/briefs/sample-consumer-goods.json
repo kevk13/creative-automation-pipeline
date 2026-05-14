@@ -1,0 +1,18 @@
+{
+  "clientName": "Vitara Naturals",
+  "products": [
+    {
+      "productName": "Energize Daily Face Serum",
+      "productDescription": "Lightweight vitamin C + niacinamide serum for brightening and anti-oxidant protection. Dermatologist-tested, vegan formula."
+    },
+    {
+      "productName": "Restore Overnight Repair Cream",
+      "productDescription": "Rich peptide-infused night cream with hyaluronic acid for deep hydration and skin barrier restoration while you sleep."
+    }
+  ],
+  "targetRegion": "Southeast Asia",
+  "targetAudience": "Women 25-40, urban professionals, health-conscious, values clean ingredients and proven efficacy",
+  "campaignMessage": "Science you can feel. Nature you can trust.",
+  "brandPalette": ["#2D6A4F", "#F8F3E8", "#B7D7C2"],
+  "prohibitedWords": ["cure", "guaranteed", "clinically proven", "anti-aging"]
+}
