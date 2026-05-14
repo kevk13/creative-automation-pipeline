@@ -3,6 +3,7 @@ import path from "path";
 import { generateImage } from "@workspace/integrations-gemini-ai/image";
 import { createAnthropicClient, TEXT_MODEL } from "../lib/ai-clients.js";
 import { calcClaudeCost, logStep } from "../campaign-logger.js";
+import { withRetry } from "../lib/retry.js";
 import type { Product, CampaignBrief } from "../schemas/campaignBrief.js";
 import { slugify } from "../schemas/campaignBrief.js";
 
@@ -69,7 +70,19 @@ Return ONLY the image generation prompt, nothing else.`,
   const imagePrompt =
     promptResponse.content[0].type === "text" ? promptResponse.content[0].text : "";
 
-  const { b64_json } = await generateImage(imagePrompt);
+  const { b64_json } = await withRetry(
+    () => generateImage(imagePrompt),
+    {
+      maxAttempts: 4,
+      baseDelayMs: 1000,
+      jitterFactor: 0.2,
+      agentName: "image_generator",
+      context: {
+        productName: product.productName,
+        model: "gemini-2.5-flash-image",
+      },
+    }
+  );
 
   logStep("generateAssetWithGenAI", "Image generated", {
     product: product.productName,

@@ -1,0 +1,25 @@
+Add retry logic with exponential backoff to the Nano Banana image generation calls. Requirements:
+Where to add it:
+The retry should wrap the actual API call to Nano Banana inside the image generator agent. Do not add retry at the workflow orchestration level — retry belongs at the API boundary where transient failures occur.
+Retry behavior:
+	•	Maximum 3 retry attempts (4 total attempts including the initial call)
+	•	Exponential backoff with jitter: wait 1s, 2s, 4s between retries with ±20% random jitter
+	•	Retry only on transient errors: HTTP 429 (rate limit), HTTP 500/502/503/504 (server errors), network timeouts, connection resets
+	•	Do NOT retry on: HTTP 400 (bad request), HTTP 401/403 (auth errors), HTTP 404 (not found), or any error indicating the request itself is malformed
+	•	After all retries exhausted, throw a descriptive error that names which product and which aspect ratio failed so the workflow can surface it cleanly
+Logging requirements:
+Every retry attempt must be logged with structured JSON including:
+	•	agent name (image_generator)
+	•	attempt number (1, 2, 3, 4)
+	•	error type (rate_limit, server_error, timeout, etc.)
+	•	HTTP status code if available
+	•	delay before next retry in milliseconds
+	•	product name and aspect ratio being generated
+	•	timestamp
+The final success or final failure must also be logged with total attempts and total elapsed time.
+Cost tracking:
+Failed attempts that did not produce an image should NOT be counted in cost tracking. Only successful generations contribute to cumulative campaign cost. Retried failures are operationally observable but financially zero.
+Implementation constraint:
+Use a generic retry utility function so the same retry wrapper can be applied to other API calls later (e.g., if we add Firefly or OpenAI image generation). Do not hardcode retry logic inside the Nano Banana call specifically.
+Testing:
+After implementation, run the pipeline once with a valid brief to confirm nothing broke. Show me the structured log output from a successful run so I can verify the retry wrapper is wired but not interfering with happy-path execution.
