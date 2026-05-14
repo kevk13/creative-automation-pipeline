@@ -1,0 +1,11 @@
+{"level":30,"time":"2026-05-14T15:01:01.493Z","pid":1955,"hostname":"41e8d9412cd5","step":"campaign-route","runId":"6189fd59-09ff-4d46-bdd9-50afabfea0b7","clientName":"Sterling Atelier","msg":"Starting workflow run"}
+{"level":30,"time":"2026-05-14T15:01:01.494Z","pid":1955,"hostname":"41e8d9412cd5","step":"loadBrief","clientName":"Sterling Atelier","products":2,"msg":"Brief loaded and validated"}
+{"level":30,"time":"2026-05-14T15:01:01.494Z","pid":1955,"hostname":"41e8d9412cd5","step":"gatherAssets","products":["Test Ring","Test Bracelet"],"msg":"Starting asset gathering"}
+{"level":30,"time":"2026-05-14T15:01:01.495Z","pid":1955,"hostname":"41e8d9412cd5","step":"assetGatherer","msg":"Processing product: Test Ring"}
+{"level":30,"time":"2026-05-14T15:01:01.495Z","pid":1955,"hostname":"41e8d9412cd5","step":"assetGatherer","msg":"Generating asset for Test Ring via GenAI"}
+{"level":30,"time":"2026-05-14T15:01:07.442Z","pid":1955,"hostname":"41e8d9412cd5","step":"generateAssetWithGenAI","product":"Test Ring","inputTokens":141,"outputTokens":165,"costUSD":0.0028980000000000004,"model":"claude-sonnet-4-5","msg":"Claude prompt crafted"}
+{"level":30,"time":"2026-05-14T15:01:38.178Z","pid":1955,"hostname":"41e8d9412cd5","step":"generateAssetWithGenAI","product":"Test Ring","imageCount":1,"costUSD":0.04,"model":"gpt-image-1","msg":"Image generated"}
+{"level":30,"time":"2026-05-14T15:01:38.182Z","pid":1955,"hostname":"41e8d9412cd5","step":"assetGatherer","product":"Test Ring","path":"/home/runner/workspace/artifacts/api-server/output/generated/test-ring.png","method":"gpt-image-1","costUSD":0.042898,"msg":"Asset generated"}
+{"level":30,"time":"2026-05-14T15:01:38.182Z","pid":1955,"hostname":"41e8d9412cd5","step":"assetGatherer","msg":"Processing product: Test Bracelet"}
+{"level":30,"time":"2026-05-14T15:01:38.182Z","pid":1955,"hostname":"41e8d9412cd5","step":"assetGatherer","msg":"Generating asset for Test Bracelet via GenAI"}
+{"level":30,"time":"2026-05-14T15:01:43.956Z","pid":1955,"hostname":"41e8d9412cd5","step":"generateAssetWithGenAI","product":"Test Bracelet","inputTokens":142,"outputTokens":170,"costUSD":0.0029760000000000003,"model":"claude-sonnet-4-5","msg":"Claude prompt crafted"}

@@ -1,5 +1,8 @@
-import app from "./app";
-import { logger } from "./lib/logger";
+import { validateAiClients } from "./lib/ai-clients.js";
+import app from "./app.js";
+import { logger } from "./lib/logger.js";
+
+validateAiClients();
 
 const rawPort = process.env["PORT"];
 
@@ -21,5 +24,5 @@ app.listen(port, (err) => {
     process.exit(1);
   }
 
-  logger.info({ port }, "Server listening");
+  logger.info({ port }, "Creative Automation Pipeline server listening");
 });

@@ -1,0 +1,18 @@
+clientName: Sterling Atelier
+products:
+  - productName: Sterling Silver Moonstone Necklace
+    productDescription: "Minimalist pendant for everyday wear, ethically sourced moonstone, hand-finished in small batches"
+  - productName: Sterling Silver Hoop Earrings
+    productDescription: "Modern thin hoops, hypoallergenic, designed for layering"
+targetRegion: North America
+targetAudience: "Women 28-42, urban, values craftsmanship and ethical sourcing, shops DTC brands"
+campaignMessage: "Carry your story."
+brandPalette:
+  - "#C0C0C0"
+  - "#1A1A1A"
+  - "#F5F5F0"
+prohibitedWords:
+  - free
+  - guaranteed
+  - miracle
+  - cure

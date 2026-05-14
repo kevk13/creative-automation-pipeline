@@ -1,45 +1,80 @@
-# [Project name]
+# Creative Automation Pipeline
 
-_Replace the heading above with the project's name, and this line with one sentence describing what this app does for users._
+A production-grade creative automation pipeline for social ad campaigns. Upload a campaign brief (YAML or JSON), and the pipeline automatically generates AI product images in three aspect ratios, applies brand overlays, and runs compliance checks — all orchestrated through a six-step multi-agent Mastra-compatible workflow.
 
 ## Run & Operate
 
-- `pnpm --filter @workspace/api-server run dev` — run the API server (port 5000)
+- `pnpm --filter @workspace/api-server run dev` — run the API server (port auto-assigned via PORT env)
+- `pnpm --filter @workspace/frontend run dev` — run the React frontend
 - `pnpm run typecheck` — full typecheck across all packages
 - `pnpm run build` — typecheck + build all packages
 - `pnpm --filter @workspace/api-spec run codegen` — regenerate API hooks and Zod schemas from the OpenAPI spec
-- `pnpm --filter @workspace/db run push` — push DB schema changes (dev only)
-- Required env: `DATABASE_URL` — Postgres connection string
 
 ## Stack
 
 - pnpm workspaces, Node.js 24, TypeScript 5.9
-- API: Express 5
-- DB: PostgreSQL + Drizzle ORM
-- Validation: Zod (`zod/v4`), `drizzle-zod`
-- API codegen: Orval (from OpenAPI spec)
-- Build: esbuild (CJS bundle)
+- API: Express 5 with Server-Sent Events (SSE) for real-time pipeline progress
+- AI: Anthropic claude-sonnet-4-5 (text + vision), OpenAI gpt-image-1 (image generation)
+- Image processing: Sharp (resize, composite SVG overlays)
+- Workflow: Custom Mastra-compatible `createStep`/`createWorkflow` runner (`src/workflow/mastra-compat.ts`)
+- Brief format: YAML/JSON parsed by `js-yaml`
+- Logging: Pino (structured JSON, dual file+console, cost tracking per AI call)
+- Validation: Zod at every workflow step boundary
+- Frontend: Vite + React 19 + Tailwind v4, React Query, SSE streaming
+- API codegen: Orval (from OpenAPI spec → React Query hooks + Zod schemas)
+- Build: esbuild (ESM bundle) / tsx watch (dev)
+- No database — file-based storage with JSON manifests
 
 ## Where things live
 
-_Populate as you build — short repo map plus pointers to the source-of-truth file for DB schema, API contracts, theme files, etc._
+- `lib/api-spec/openapi.yaml` — source of truth for all API contracts
+- `lib/api-client-react/src/generated/` — generated React Query hooks (do not hand-edit)
+- `lib/api-zod/src/generated/` — generated Zod schemas (do not hand-edit)
+- `artifacts/api-server/src/workflow/` — 6-step Mastra workflow + step implementations
+- `artifacts/api-server/src/agents/` — AssetGatherer + ComplianceChecker agents
+- `artifacts/api-server/src/tools/` — agent tools (checkLocalAsset, generateAssetWithGenAI, extractColors, checkLogoPresence)
+- `artifacts/api-server/src/schemas/campaignBrief.ts` — Zod schema for CampaignBrief (source of truth)
+- `artifacts/api-server/briefs/sample-jewelry.yaml` — sample campaign brief for testing
+- `artifacts/api-server/output/` — generated images + manifest.json + compliance.json (auto-created at runtime)
+- `artifacts/api-server/logs/` — structured JSON run logs (auto-created at runtime)
+- `artifacts/frontend/src/App.tsx` — single-page React app
 
 ## Architecture decisions
 
-_Populate as you build — non-obvious choices a reader couldn't infer from the code (3-5 bullets)._
+- **Mastra-compatible workflow**: `mastra-compat.ts` implements `createStep`/`createWorkflow` matching `@mastra/core/workflows` API exactly. Swap the import to use real Mastra with zero code changes.
+- **SSE over WebSocket**: Six workflow steps emit progress via EventEmitter → Express SSE. Simpler than WebSockets, debuggable with `curl -N`, works through all proxy layers.
+- **File-based storage**: `manifest.json` and `compliance.json` are portable artifacts. No DB needed for the POC; the schema maps directly to Postgres tables.
+- **Dual AI client setup**: `src/lib/ai-clients.ts` checks `AI_INTEGRATIONS_*` env vars first (Replit), falls back to `ANTHROPIC_API_KEY`/`OPENAI_API_KEY` (local). Identical behavior either way.
+- **Pino cost logging**: Every AI call logs `inputTokens`, `outputTokens`, and `costUSD`. Critical for per-client cost attribution at scale.
+- **tsx for dev, esbuild for prod**: tsx watch avoids esbuild bundling issues with Mastra/AI SDKs during development. Production uses esbuild with heavy packages externalized.
 
 ## Product
 
-_Describe the high-level user-facing capabilities of this app once they exist._
+The pipeline accepts a YAML/JSON campaign brief describing a client, products, target audience, campaign message, brand palette, and prohibited words. It then:
+1. Loads and validates the brief
+2. Generates or retrieves product images (AI-generated via Claude + OpenAI, or local file)
+3. Renders each image in three aspect ratios (1:1, 9:16, 16:9) using Sharp
+4. Composites the campaign message as an SVG overlay on each image
+5. Organizes outputs and writes `manifest.json`
+6. Runs compliance checks: color palette scoring, logo presence (Claude vision), legal word scan
+
+Results are surfaced in a React gallery with download links and a compliance report.
 
 ## User preferences
 
-_Populate as you build — explicit user instructions worth remembering across sessions._
+- Stack is locked: TypeScript, Mastra-compatible workflows, Anthropic claude-sonnet-4-5, OpenAI gpt-image-1, Sharp, Express, Vite+React+Tailwind, Pino, Zod, js-yaml
+- No database — file-based storage only
+- Single-page frontend
 
 ## Gotchas
 
-_Populate as you build — sharp edges, "always run X before Y" rules._
+- **Dev script uses tsx, not esbuild**: `pnpm run dev` in api-server uses `tsx watch src/index.ts`. Do not use `pnpm run build` for dev — it requires PORT/BASE_PATH env vars that only workflows provide.
+- **Sharp needs onlyBuiltDependencies entry**: Already in pnpm-workspace.yaml. If pnpm warns about ignored build scripts, that entry is the fix.
+- **Codegen after spec changes**: Always run `pnpm --filter @workspace/api-spec run codegen` after editing `lib/api-spec/openapi.yaml`. The typecheck:libs step runs automatically as part of codegen.
+- **Output directory**: All generated files go to `artifacts/api-server/output/`. Concurrent pipeline runs overwrite each other. Production needs run-scoped output directories.
+- **SSE + Replit proxy**: The SSE stream uses `res.flushHeaders()` and `X-Accel-Buffering: no` to prevent buffering through the proxy.
 
 ## Pointers
 
+- See `README.md` at the project root for full architecture docs, setup instructions, and production extension path
 - See the `pnpm-workspace` skill for workspace structure, TypeScript setup, and package details

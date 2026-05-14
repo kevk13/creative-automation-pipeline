@@ -3,13 +3,15 @@ info:
   # Do not change the title, if the title changes, the import paths will be broken
   title: Api
   version: 0.1.0
-  description: API specification
+  description: Creative Automation Pipeline API
 servers:
   - url: /api
     description: Base API path
 tags:
   - name: health
     description: Health operations
+  - name: campaign
+    description: Campaign generation operations
 paths:
   /healthz:
     get:
@@ -24,6 +26,34 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+  /manifest:
+    get:
+      operationId: getManifest
+      tags: [campaign]
+      summary: Get latest output manifest
+      responses:
+        "200":
+          description: Output manifest
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OutputManifest"
+        "404":
+          description: No manifest found
+  /compliance:
+    get:
+      operationId: getCompliance
+      tags: [campaign]
+      summary: Get latest compliance report
+      responses:
+        "200":
+          description: Compliance report
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ComplianceReport"
+        "404":
+          description: No compliance report found
 components:
   schemas:
     HealthStatus:
@@ -33,4 +63,116 @@ components:
           type: string
       required:
         - status
-
+    ManifestEntry:
+      type: object
+      properties:
+        productName:
+          type: string
+        productSlug:
+          type: string
+        aspectRatio:
+          type: string
+        filePath:
+          type: string
+        fileSize:
+          type: number
+        generationTimestamp:
+          type: string
+        generationMethod:
+          type: string
+          enum: [local, gpt-image-1, dalle-3]
+      required:
+        - productName
+        - productSlug
+        - aspectRatio
+        - filePath
+        - fileSize
+        - generationTimestamp
+        - generationMethod
+    OutputManifest:
+      type: object
+      properties:
+        generatedAt:
+          type: string
+        entries:
+          type: array
+          items:
+            $ref: "#/components/schemas/ManifestEntry"
+      required:
+        - generatedAt
+        - entries
+    ColorComplianceItem:
+      type: object
+      properties:
+        imagePath:
+          type: string
+        productName:
+          type: string
+        aspectRatio:
+          type: string
+        dominantColors:
+          type: array
+          items:
+            type: string
+        score:
+          type: number
+        pass:
+          type: boolean
+      required:
+        - imagePath
+        - productName
+        - aspectRatio
+        - dominantColors
+        - score
+        - pass
+    LogoComplianceItem:
+      type: object
+      properties:
+        imagePath:
+          type: string
+        productName:
+          type: string
+        aspectRatio:
+          type: string
+        logoPresent:
+          type: boolean
+        reasoning:
+          type: string
+      required:
+        - imagePath
+        - productName
+        - aspectRatio
+        - logoPresent
+        - reasoning
+    LegalCompliance:
+      type: object
+      properties:
+        passed:
+          type: boolean
+        matches:
+          type: array
+          items:
+            type: string
+      required:
+        - passed
+        - matches
+    ComplianceReport:
+      type: object
+      properties:
+        generatedAt:
+          type: string
+        colorCompliance:
+          type: array
+          items:
+            $ref: "#/components/schemas/ColorComplianceItem"
+        logoCompliance:
+          type: array
+          items:
+            $ref: "#/components/schemas/LogoComplianceItem"
+        legalCompliance:
+          $ref: "#/components/schemas/LegalCompliance"
+      required:
+        - generatedAt
+        - colorCompliance
+        - logoCompliance
+        - legalCompliance
