@@ -4,7 +4,7 @@
   "license": "MIT",
   "scripts": {
     "preinstall": "sh -c 'rm -f package-lock.json yarn.lock; case \"${npm_config_user_agent:-pnpm/unknown}\" in pnpm/*) ;; *) echo \"Use pnpm instead\" >&2; exit 1 ;; esac'",
-    "dev": "concurrently --names \"api,web\" --prefix-colors \"cyan,magenta\" \"PORT=5000 pnpm --filter @workspace/api-server run dev\" \"PORT=5173 BASE_PATH=/ pnpm --filter @workspace/frontend run dev\"",
+    "dev": "concurrently --names \"api,web\" --prefix-colors \"cyan,magenta\" \"PORT=5000 pnpm --filter @workspace/api-server run dev\" \"PORT=5173 pnpm --filter @workspace/frontend run dev\"",
     "build": "pnpm run typecheck && pnpm -r --if-present run build",
     "typecheck:libs": "tsc --build",
     "typecheck": "pnpm run typecheck:libs && pnpm -r --filter \"./artifacts/**\" --filter \"./scripts\" --if-present run typecheck"
