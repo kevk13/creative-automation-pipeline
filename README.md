@@ -424,6 +424,45 @@ jq 'select(.adapter == "dropbox")' logs/run-*.json
 
 ---
 
+## Future Iterations
+
+Beyond the production-readiness extensions above, the higher-leverage next
+steps are about closing the gap between "generates brand-adjacent imagery"
+and "generates **on-brand**, **on-product** variations at scale."
+
+### Reference-image conditioning
+The current pipeline generates from text prompts alone, which produces
+brand-adjacent imagery but doesn't reliably preserve product fidelity
+across many campaigns — a real Vitara serum bottle in 50 generations
+should look like the *same* bottle, not 50 similar bottles. Adding
+image-to-image conditioning (Gemini's reference mode, Adobe Firefly's
+structure references, or a ControlNet pipeline) would let the system
+take product photography as input and produce variations that preserve
+shape, color, and label.
+
+### Brand fine-tuning (LoRA adapters)
+Train lightweight LoRA adapters on a brand's existing creative library
+so every output absorbs the visual language without needing it spelled
+out in the prompt. One adapter per client, reused across every campaign.
+Reduces per-prompt token cost, improves consistency, and makes "off-brand
+output" structurally harder.
+
+### DAM integration (Adobe AEM Assets, Bynder, Brandfolder)
+The `existingAssetPath` mechanism in the brief schema is the first step
+toward this. The next step is `StorageAdapter`-style adapters for real
+digital asset management systems — Adobe AEM Assets in particular, given
+its position in the Experience Cloud — so the pipeline reaches into a
+client's approved asset library instead of relying on local file paths.
+An `AEMAssetsAdapter` is structurally identical to the existing
+`DropboxStorageAdapter`: implement `load()`, `exists()`, `getUrl()`,
+wire via env var, no other pipeline changes.
+
+Together these shift the system from "generate creative variations"
+to "generate on-brand, on-product variations at scale" — the business
+outcome the brief actually describes.
+
+---
+
 ## Assumptions and Limitations
 
 - **Variation scope**: The PDF objective describes generating "variations for campaign assets." This POC interprets variations as the combination of multi-product output and multi-aspect-ratio output, producing six final creatives for a two-product campaign (2 products x 3 aspect ratios). A broader interpretation - multiple distinct creative concepts per product for A/B testing - is supported architecturally via a `variantsPerProduct` parameter on the brief schema. The AssetGatherer step is single-iteration today; making it N-iteration is an additive change with no downstream restructuring required. Per-region localization of the campaign message is similarly architecture-ready via a `translateStep` after `loadBrief`, using the existing `targetRegion` field. Both are scope-out decisions for the 2-3 hour POC window, not architectural limitations.
