@@ -69,9 +69,11 @@ catalog:
 autoInstallPeers: false
 
 onlyBuiltDependencies:
+  - '@google/genai'
   - '@swc/core'
   - esbuild
   - msw
+  - protobufjs
   - sharp
   - unrs-resolver
 

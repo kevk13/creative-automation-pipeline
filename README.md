@@ -8,25 +8,66 @@ A creative automation pipeline for social ad campaigns. Upload a campaign brief 
 
 ## Quick Start
 
-This project uses **pnpm** workspaces. `npm install` is blocked by a preinstall guard.
+The fastest path on a fresh machine. Should take about two minutes after the install completes.
+
+### Prerequisites
+
+You need exactly two things installed:
+
+- **Node.js 20+** — install from [nodejs.org](https://nodejs.org/) or via Homebrew: `brew install node`
+- **pnpm 10.x** — the project pins this via `packageManager` so corepack will auto-activate it on Node 16.10+. If `pnpm --version` shows nothing or shows 9.x/11.x, run one of these once:
+  - `corepack enable` (preferred, no extra install)
+  - or `npm install -g pnpm@10`
+
+Verify with:
+```bash
+node --version    # v20.x or later
+pnpm --version    # 10.x
+```
+
+### Setup
 
 ```bash
-# 1. Install
-pnpm install
-
-# 2. Configure environment
+git clone https://github.com/kevk13/creative-automation-pipeline.git
+cd creative-automation-pipeline
 cp .env.example .env
-# Edit .env and set ANTHROPIC_API_KEY and GEMINI_API_KEY
+```
 
-# 3. Start both services (API on :5000, frontend on :5173)
+Now open `.env` in your editor of choice and paste your two API keys:
+
+```env
+ANTHROPIC_API_KEY=sk-ant-api03-...   # from https://console.anthropic.com/settings/keys
+GEMINI_API_KEY=AIza...                # from https://aistudio.google.com/apikey
+```
+
+> A few demo runs cost roughly $0.04 each — well within Anthropic's
+> free-trial credit and Gemini's free tier. If you hit a rate limit
+> mid-run, the Anthropic console may need a billing method attached.
+
+Then install and run:
+
+```bash
+pnpm install
 pnpm run dev
 ```
 
-Open `http://localhost:5173`.
+The dev script starts the API on port 4000 and the frontend on port 5173. When you see `Local: http://localhost:5173` in the logs, open that URL in your browser. Load a sample brief, click **Run Pipeline**, and the gallery will populate in about 60 seconds.
 
-The `pnpm run dev` command starts both services concurrently using the ports above. The vite frontend config reads `PORT` from the environment and will throw if it is not set - the root `dev` script handles this automatically.
+> **macOS note**: the API runs on `:4000` because macOS AirPlay Receiver occupies `:5000` by default.
 
-> **On Replit**: Both services start via the workflow panel. No API keys needed - AI Integrations provides Anthropic and Gemini credentials automatically.
+> **On Replit**: both services start via the workflow panel. No API keys needed — AI Integrations provides Anthropic and Gemini credentials automatically.
+
+### Alternative: Docker
+
+If you'd rather not install Node and pnpm locally, the repo ships with a `docker-compose.yml` that handles everything:
+
+```bash
+cp .env.example .env
+# Edit .env with your API keys
+docker compose up --build
+```
+
+Same `http://localhost:5173` URL. Works identically on macOS, Linux, and Windows.
 
 ---
 
@@ -134,7 +175,7 @@ Copy `.env.example` to `.env` and fill in your values:
 # Required
 ANTHROPIC_API_KEY=sk-ant-api03-...
 GEMINI_API_KEY=AIza...
-PORT=5000
+PORT=4000
 
 # Optional - storage backend (default: local)
 STORAGE_ADAPTER=local
@@ -410,6 +451,45 @@ jq 'select(.adapter == "dropbox")' logs/run-*.json
 | A/B testing | Generate N variants per product, track downstream CTR, feed back into prompt tuning |
 | Localization | Schema already has `targetRegion`; add `translateStep` after `loadBrief` to localize `campaignMessage` and `productDescription` |
 | Cloud storage | `STORAGE_ADAPTER=dropbox` is live; `s3` and `azure` are scaffolded single-class additions |
+
+---
+
+## Future Iterations
+
+Beyond the production-readiness extensions above, the higher-leverage next
+steps are about closing the gap between "generates brand-adjacent imagery"
+and "generates **on-brand**, **on-product** variations at scale."
+
+### Reference-image conditioning
+The current pipeline generates from text prompts alone, which produces
+brand-adjacent imagery but doesn't reliably preserve product fidelity
+across many campaigns — a real Vitara serum bottle in 50 generations
+should look like the *same* bottle, not 50 similar bottles. Adding
+image-to-image conditioning (Gemini's reference mode, Adobe Firefly's
+structure references, or a ControlNet pipeline) would let the system
+take product photography as input and produce variations that preserve
+shape, color, and label.
+
+### Brand fine-tuning (LoRA adapters)
+Train lightweight LoRA adapters on a brand's existing creative library
+so every output absorbs the visual language without needing it spelled
+out in the prompt. One adapter per client, reused across every campaign.
+Reduces per-prompt token cost, improves consistency, and makes "off-brand
+output" structurally harder.
+
+### DAM integration (Adobe AEM Assets, Bynder, Brandfolder)
+The `existingAssetPath` mechanism in the brief schema is the first step
+toward this. The next step is `StorageAdapter`-style adapters for real
+digital asset management systems — Adobe AEM Assets in particular, given
+its position in the Experience Cloud — so the pipeline reaches into a
+client's approved asset library instead of relying on local file paths.
+An `AEMAssetsAdapter` is structurally identical to the existing
+`DropboxStorageAdapter`: implement `load()`, `exists()`, `getUrl()`,
+wire via env var, no other pipeline changes.
+
+Together these shift the system from "generate creative variations"
+to "generate on-brand, on-product variations at scale" — the business
+outcome the brief actually describes.
 
 ---
 
