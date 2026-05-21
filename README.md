@@ -8,36 +8,62 @@ A creative automation pipeline for social ad campaigns. Upload a campaign brief 
 
 ## Quick Start
 
-Two supported paths. Docker is the most foolproof across macOS, Linux, and Windows; pnpm is faster if you already have a Node toolchain.
+The fastest path on a fresh machine. Should take about two minutes after the install completes.
 
-### Option A — Docker (recommended for handoff)
+### Prerequisites
 
-Requires Docker Desktop. Works identically on any host OS, sidesteps the macOS AirPlay port collision, and pins Node and pnpm versions.
+You need exactly two things installed:
 
+- **Node.js 20+** — install from [nodejs.org](https://nodejs.org/) or via Homebrew: `brew install node`
+- **pnpm 10.x** — the project pins this via `packageManager` so corepack will auto-activate it on Node 16.10+. If `pnpm --version` shows nothing or shows 9.x/11.x, run one of these once:
+  - `corepack enable` (preferred, no extra install)
+  - or `npm install -g pnpm@10`
+
+Verify with:
 ```bash
-cp .env.example .env
-# Edit .env and set ANTHROPIC_API_KEY and GEMINI_API_KEY
-docker compose up --build
+node --version    # v20.x or later
+pnpm --version    # 10.x
 ```
 
-Open `http://localhost:5173`.
+### Setup
 
-### Option B — Local pnpm
+```bash
+git clone https://github.com/kevk13/creative-automation-pipeline.git
+cd creative-automation-pipeline
+cp .env.example .env
+```
 
-Requires Node 20+ and pnpm 9+. `npm install` is blocked by a preinstall guard.
+Now open `.env` in your editor of choice and paste your two API keys:
+
+```env
+ANTHROPIC_API_KEY=sk-ant-api03-...   # from https://console.anthropic.com/settings/keys
+GEMINI_API_KEY=AIza...                # from https://aistudio.google.com/apikey
+```
+
+Then install and run:
 
 ```bash
 pnpm install
-cp .env.example .env
-# Edit .env and set ANTHROPIC_API_KEY and GEMINI_API_KEY
 pnpm run dev
 ```
 
-Open `http://localhost:5173`. The dev script starts the API on `:4000` and the frontend on `:5173`; Vite proxies `/api/*` to the API automatically.
+The dev script starts the API on port 4000 and the frontend on port 5173. When you see `Local: http://localhost:5173` in the logs, open that URL in your browser. Load a sample brief, click **Run Pipeline**, and the gallery will populate in about 60 seconds.
 
-> **macOS note**: the API runs on `:4000` because macOS AirPlay Receiver squats on `:5000` by default.
+> **macOS note**: the API runs on `:4000` because macOS AirPlay Receiver occupies `:5000` by default.
 
-> **On Replit**: both services start via the workflow panel. No API keys needed - AI Integrations provides Anthropic and Gemini credentials automatically.
+> **On Replit**: both services start via the workflow panel. No API keys needed — AI Integrations provides Anthropic and Gemini credentials automatically.
+
+### Alternative: Docker
+
+If you'd rather not install Node and pnpm locally, the repo ships with a `docker-compose.yml` that handles everything:
+
+```bash
+cp .env.example .env
+# Edit .env with your API keys
+docker compose up --build
+```
+
+Same `http://localhost:5173` URL. Works identically on macOS, Linux, and Windows.
 
 ---
 
