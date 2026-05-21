@@ -40,6 +40,10 @@ ANTHROPIC_API_KEY=sk-ant-api03-...   # from https://console.anthropic.com/settin
 GEMINI_API_KEY=AIza...                # from https://aistudio.google.com/apikey
 ```
 
+> A few demo runs cost roughly $0.04 each — well within Anthropic's
+> free-trial credit and Gemini's free tier. If you hit a rate limit
+> mid-run, the Anthropic console may need a billing method attached.
+
 Then install and run:
 
 ```bash
