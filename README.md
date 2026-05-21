@@ -8,25 +8,36 @@ A creative automation pipeline for social ad campaigns. Upload a campaign brief 
 
 ## Quick Start
 
-This project uses **pnpm** workspaces. `npm install` is blocked by a preinstall guard.
+Two supported paths. Docker is the most foolproof across macOS, Linux, and Windows; pnpm is faster if you already have a Node toolchain.
+
+### Option A — Docker (recommended for handoff)
+
+Requires Docker Desktop. Works identically on any host OS, sidesteps the macOS AirPlay port collision, and pins Node and pnpm versions.
 
 ```bash
-# 1. Install
-pnpm install
-
-# 2. Configure environment
 cp .env.example .env
 # Edit .env and set ANTHROPIC_API_KEY and GEMINI_API_KEY
-
-# 3. Start both services (API on :5000, frontend on :5173)
-pnpm run dev
+docker compose up --build
 ```
 
 Open `http://localhost:5173`.
 
-The `pnpm run dev` command starts both services concurrently using the ports above. The vite frontend config reads `PORT` from the environment and will throw if it is not set - the root `dev` script handles this automatically.
+### Option B — Local pnpm
 
-> **On Replit**: Both services start via the workflow panel. No API keys needed - AI Integrations provides Anthropic and Gemini credentials automatically.
+Requires Node 20+ and pnpm 9+. `npm install` is blocked by a preinstall guard.
+
+```bash
+pnpm install
+cp .env.example .env
+# Edit .env and set ANTHROPIC_API_KEY and GEMINI_API_KEY
+pnpm run dev
+```
+
+Open `http://localhost:5173`. The dev script starts the API on `:4000` and the frontend on `:5173`; Vite proxies `/api/*` to the API automatically.
+
+> **macOS note**: the API runs on `:4000` because macOS AirPlay Receiver squats on `:5000` by default.
+
+> **On Replit**: both services start via the workflow panel. No API keys needed - AI Integrations provides Anthropic and Gemini credentials automatically.
 
 ---
 
@@ -134,7 +145,7 @@ Copy `.env.example` to `.env` and fill in your values:
 # Required
 ANTHROPIC_API_KEY=sk-ant-api03-...
 GEMINI_API_KEY=AIza...
-PORT=5000
+PORT=4000
 
 # Optional - storage backend (default: local)
 STORAGE_ADAPTER=local
