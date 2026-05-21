@@ -16,13 +16,5 @@
   },
   "dependencies": {
     "concurrently": "^9.2.1"
-  },
-  "pnpm": {
-    "onlyBuiltDependencies": [
-      "@google/genai",
-      "esbuild",
-      "protobufjs",
-      "sharp"
-    ]
   }
 }
