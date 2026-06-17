@@ -2,126 +2,103 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>Orientation Map — creative-automation-pipeline</title>
+<title>Orientation Map</title>
 <style>
-  @page { size: letter; margin: 12mm 12mm; }
+  @page { size: letter; margin: 15mm 16mm; }
   * { box-sizing: border-box; }
   html { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-  body {
-    font-family: Georgia, "Times New Roman", serif;
-    color: #000; background: #fff;
-    font-size: 11pt; line-height: 1.32; margin: 0;
-  }
-  h1 { font-size: 17pt; margin: 0 0 1mm; }
-  .sub { font-size: 10pt; font-style: italic; margin: 0 0 3mm; }
-  .cols { column-count: 2; column-gap: 7mm; column-fill: balance; }
-  .e { break-inside: avoid; margin: 0 0 2.4mm; }
-  .e .name { font-family: "Courier New", monospace; font-weight: bold; font-size: 10.6pt; }
-  .e .what { display: block; }
-  .e .got { display: block; border-left: 2.5pt solid #000; padding-left: 2mm; margin-top: 0.6mm; }
-  .e .got b { letter-spacing: 0.3px; }
-  .summary {
-    break-inside: avoid; border: 1.5pt solid #000; padding: 2.5mm 3mm;
-    margin-top: 2mm; font-size: 10.8pt;
-  }
-  .summary h2 { font-size: 11.5pt; margin: 0 0 1.5mm; text-transform: uppercase; letter-spacing: 0.5px; }
-  hr.rule { border: none; border-top: 1.5pt solid #000; margin: 2mm 0 3mm; }
+  body { font-family: "Helvetica Neue", Arial, sans-serif; color:#000; background:#fff;
+         font-size: 13pt; line-height: 1.4; margin: 0; }
+  h1 { font-size: 21pt; margin: 0 0 1mm; }
+  .sub { font-size: 11pt; color:#000; margin: 0 0 4mm; }
+  h2 { font-size: 14.5pt; text-transform: uppercase; letter-spacing: 1px;
+       border-bottom: 3pt solid #000; padding-bottom: 1.5mm; margin: 8mm 0 4mm; }
+  .item { break-inside: avoid; margin: 0 0 5mm; }
+  .name { font-family: "Courier New", monospace; font-weight: bold; font-size: 13pt; }
+  .what { display:block; margin: 0.5mm 0 0; }
+  .got { display:block; margin: 1mm 0 0; padding-left: 4mm; border-left: 3pt solid #000; }
+  .got b { letter-spacing: 0.5px; }
+  .holes { break-inside: avoid; border: 3pt solid #000; padding: 4mm 5mm; margin-top: 4mm; }
+  .holes h2 { border:none; margin: 0 0 3mm; }
+  .holes ol { margin: 0; padding-left: 7mm; }
+  .holes li { margin: 0 0 3mm; }
 </style>
 </head>
 <body>
-  <h1>Orientation Map — creative-automation-pipeline</h1>
-  <p class="sub">Glance before the call. Each: what it does / the one decision or gotcha. Source of truth is the code.</p>
-  <hr class="rule">
+  <h1>Orientation Map</h1>
+  <p class="sub">Read top to bottom = the pipeline in order. Glance, don't read aloud.</p>
 
-  <div class="cols">
+  <h2>The flow &mdash; 6 steps in order</h2>
 
-    <div class="e"><span class="name">routes/campaign.ts</span>
-      <span class="what">POST /generate, /status, /manifest, /compliance, image serving.</span>
-      <span class="got"><b>GOTCHA:</b> /generate is fire-and-forget; returns runId instantly, run dies with the process.</span></div>
+  <div class="item"><span class="name">1. loadBrief</span>
+    <span class="what">Parse + Zod-validate the YAML/JSON brief.</span>
+    <span class="got"><b>WATCH:</b> needs min 2 products. brandPalette + prohibitedWords are optional.</span></div>
 
-    <div class="e"><span class="name">workflow/campaignWorkflow.ts</span>
-      <span class="what">Declares the 6 steps via .then()...commit().</span>
-      <span class="got"><b>GOTCHA:</b> purely linear, no branch/parallel. Order is the design.</span></div>
+  <div class="item"><span class="name">2. gatherAssets</span>
+    <span class="what">Reuse an existing asset, or generate one via Gemini.</span>
+    <span class="got"><b>WATCH:</b> not an LLM agent, just a for-loop. Throws on the first bad product = whole run dies.</span></div>
 
-    <div class="e"><span class="name">workflow/mastra-compat.ts</span>
-      <span class="what">Hand-rolled shim mimicking Mastra createStep/createWorkflow.</span>
-      <span class="got"><b>GOTCHA:</b> API-shape compatible only. In-memory linear runner, no suspend/resume/persistence.</span></div>
+  <div class="item"><span class="name">3. renderAspectRatios</span>
+    <span class="what">Sharp resizes each image to 1x1 / 9x16 / 16x9. Writes base.png.</span>
+    <span class="got"><b>WATCH:</b> fully sequential, no parallelism.</span></div>
 
-    <div class="e"><span class="name">lib/runStore.ts</span>
-      <span class="what">In-memory Map of run state + cost accumulator + runReport.</span>
-      <span class="got"><b>GOTCHA:</b> ephemeral Map, self-deletes after 1hr. Crash = total loss. Weakest spot.</span></div>
+  <div class="item"><span class="name">4. applyOverlay</span>
+    <span class="what">SVG message bar (auto-shrinking font) + optional logo. Writes final.png.</span>
+    <span class="got"><b>WATCH:</b> the black bar it adds pollutes the color compliance check later.</span></div>
 
-    <div class="e"><span class="name">lib/retry.ts</span>
-      <span class="what">Exponential backoff + jitter, regex error classification.</span>
-      <span class="got"><b>GOTCHA:</b> only wraps Gemini + Dropbox. Terminal msg hardcoded "Image generation failed" even for Dropbox.</span></div>
+  <div class="item"><span class="name">5. organizeOutputs</span>
+    <span class="what">Verify files, upload via storage adapter, write manifest.json.</span>
+    <span class="got"><b>WATCH:</b> upload failure is soft. Run still says "done", falls back to local path.</span></div>
 
-    <div class="e"><span class="name">steps/loadBrief.ts</span>
-      <span class="what">Parse + Zod-validate YAML/JSON brief.</span>
-      <span class="got"><b>GOTCHA:</b> requires min 2 products; brandPalette + prohibitedWords optional.</span></div>
+  <div class="item"><span class="name">6. checkCompliance</span>
+    <span class="what">Color score + logo vision check + prohibited-word scan. Writes compliance.json.</span>
+    <span class="got"><b>WATCH:</b> only step that isolates per-image failures. Know the 3 scorers cold.</span></div>
 
-    <div class="e"><span class="name">steps/gatherAssets + agents/assetGatherer.ts</span>
-      <span class="what">Reuse existing asset or generate via Gemini.</span>
-      <span class="got"><b>GOTCHA:</b> not an LLM agent, just a for-loop. Re-throws on first product failure (no isolation).</span></div>
+  <h2>The plumbing</h2>
 
-    <div class="e"><span class="name">steps/renderAspectRatios.ts</span>
-      <span class="what">Sharp resize to 1x1 / 9x16 / 16x9, cover-fit. Writes base.png.</span>
-      <span class="got"><b>GOTCHA:</b> sequential per product+ratio, no parallelism.</span></div>
+  <div class="item"><span class="name">routes/campaign.ts</span>
+    <span class="what">POST /generate, /status, /manifest, /compliance, image serving.</span>
+    <span class="got"><b>WATCH:</b> /generate is fire-and-forget. Returns runId instantly, run dies with the process.</span></div>
 
-    <div class="e"><span class="name">steps/applyOverlay.ts</span>
-      <span class="what">SVG message bar (auto-shrink font) + optional logo. Writes final.png.</span>
-      <span class="got"><b>GOTCHA:</b> the black bar it adds later pollutes the color compliance check.</span></div>
+  <div class="item"><span class="name">lib/runStore.ts</span>
+    <span class="what">In-memory Map of run state + cost ledger.</span>
+    <span class="got"><b>WATCH:</b> ephemeral, self-deletes after 1hr. Crash = total loss. Your weakest spot.</span></div>
 
-    <div class="e"><span class="name">steps/organizeOutputs.ts</span>
-      <span class="what">Verify files, upload via storage adapter, write manifest.json.</span>
-      <span class="got"><b>GOTCHA:</b> upload failure is soft. Run still "done", falls back to local path.</span></div>
+  <div class="item"><span class="name">lib/paths.ts</span>
+    <span class="what">Resolves OUTPUT_DIR.</span>
+    <span class="got"><b>WATCH:</b> ONE shared output dir, not per-run. Concurrent runs clobber each other.</span></div>
 
-    <div class="e"><span class="name">steps/checkCompliance + agents/complianceChecker.ts</span>
-      <span class="what">Color + logo + legal-word scan.</span>
-      <span class="got"><b>GOTCHA:</b> per-image try/catch, the only resilient step. Drill the three scorers.</span></div>
+  <div class="item"><span class="name">lib/retry.ts</span>
+    <span class="what">Exponential backoff + jitter.</span>
+    <span class="got"><b>WATCH:</b> only wraps Gemini + Dropbox. Claude prompt + vision are NOT retried.</span></div>
 
-    <div class="e"><span class="name">tools/extractColors.ts</span>
-      <span class="what">50x50 quantized dominant colors, Euclidean palette score, pass &ge; 0.3.</span>
-      <span class="got"><b>GOTCHA:</b> empty palette = score 0 = every image FAILS color compliance.</span></div>
+  <div class="item"><span class="name">workflow/mastra-compat.ts</span>
+    <span class="what">Hand-rolled Mastra-shaped runner.</span>
+    <span class="got"><b>WATCH:</b> API-shape only. Linear + in-memory. No resume/persistence.</span></div>
 
-    <div class="e"><span class="name">tools/checkLogoPresence.ts</span>
-      <span class="what">Claude vision yes/no on any logo/text/watermark.</span>
-      <span class="got"><b>GOTCHA:</b> no reference matching, no retry, errors swallowed to false. Campaign text reads as "logo present."</span></div>
+  <div class="item"><span class="name">lib/ai-clients.ts</span>
+    <span class="what">Anthropic client + model constants.</span>
+    <span class="got"><b>WATCH:</b> claude-sonnet-4-5. No temperature set = non-determinism.</span></div>
 
-    <div class="e"><span class="name">tools/generateAssetWithGenAI.ts</span>
-      <span class="what">Claude crafts prompt, Gemini renders image.</span>
-      <span class="got"><b>GOTCHA:</b> image cost hardcoded $0. The Claude prompt call is NOT retried.</span></div>
+  <div class="item"><span class="name">lib/storage/</span>
+    <span class="what">Local + Dropbox live, S3/Azure scaffolded to throw.</span>
+    <span class="got"><b>WATCH:</b> Dropbox chosen for creative-team workflow, not tech preference.</span></div>
 
-    <div class="e"><span class="name">lib/ai-clients.ts</span>
-      <span class="what">Anthropic client factory + model constants.</span>
-      <span class="got"><b>GOTCHA:</b> TEXT_MODEL = claude-sonnet-4-5. No temperature set anywhere (non-determinism).</span></div>
+  <div class="item"><span class="name">lib/db/</span>
+    <span class="what">Empty Drizzle stub, never imported.</span>
+    <span class="got"><b>WATCH:</b> this IS your "Postgres later." Honest deferral.</span></div>
 
-    <div class="e"><span class="name">lib/paths.ts</span>
-      <span class="what">Resolves OUTPUT_DIR / BRIEFS_DIR / LOGS_DIR.</span>
-      <span class="got"><b>GOTCHA:</b> OUTPUT_DIR is ONE shared dir, not per-run. Concurrent runs clobber each other.</span></div>
+  <div class="item"><span class="name">frontend/App.tsx</span>
+    <span class="what">Polls /status every 750ms.</span>
+    <span class="got"><b>WATCH:</b> polling because Replit proxy buffers SSE. No SSE endpoint exists.</span></div>
 
-    <div class="e"><span class="name">lib/storage/</span>
-      <span class="what">Adapter interface. Local + Dropbox live, S3/Azure throw.</span>
-      <span class="got"><b>GOTCHA:</b> Dropbox chosen for creative-team workflow, not tech preference. Have that reason ready.</span></div>
-
-    <div class="e"><span class="name">campaign-logger.ts / progress-bus.ts</span>
-      <span class="what">Pino structured logs. EventEmitter feeds runStore.</span>
-      <span class="got"><b>GOTCHA:</b> cost ledger has no per-call latency field. Latency is run-level only.</span></div>
-
-    <div class="e"><span class="name">lib/db/</span>
-      <span class="what">Empty Drizzle stub, never imported.</span>
-      <span class="got"><b>GOTCHA:</b> this IS your "Postgres later." Honest deferral, not a lie.</span></div>
-
-    <div class="e"><span class="name">frontend/src/App.tsx</span>
-      <span class="what">Polls /status every 750ms until done/error.</span>
-      <span class="got"><b>GOTCHA:</b> polling because Replit proxy buffers SSE. No SSE endpoint exists.</span></div>
-
-  </div>
-
-  <div class="summary">
-    <h2>One-breath summary</h2>
-    6 linear Zod-gated steps, in-process and in-memory. Two deterministic compliance gates (color, legal words) plus one advisory vision check (logo).
-    <b>Strengths:</b> per-step contracts, structured observability, vendor seams.
-    <b>Three holes to own first:</b> (1) ephemeral run state = crash loses everything, (2) shared output dir = concurrency clobber, (3) thin compliance scoring.
+  <div class="holes">
+    <h2>3 holes to own first</h2>
+    <ol>
+      <li><b>Ephemeral run state</b> &mdash; a crash loses every in-flight run.</li>
+      <li><b>Shared output dir</b> &mdash; concurrent runs overwrite each other's files.</li>
+      <li><b>Thin compliance</b> &mdash; loose color threshold, vision reads text as a logo, words only scan your own message.</li>
+    </ol>
   </div>
 
 </body>

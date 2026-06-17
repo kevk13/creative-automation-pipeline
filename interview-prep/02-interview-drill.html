@@ -2,119 +2,167 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>Interview Drill — creative-automation-pipeline</title>
+<title>Interview Drill</title>
 <style>
-  @page { size: letter; margin: 13mm 13mm; }
+  @page { size: letter; margin: 15mm 16mm; }
   * { box-sizing: border-box; }
   html { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-  body {
-    font-family: Georgia, "Times New Roman", serif;
-    color: #000; background: #fff;
-    font-size: 11.5pt; line-height: 1.34; margin: 0;
-  }
-  h1 { font-size: 17pt; margin: 0 0 3mm; }
-  h2 {
-    font-size: 12.5pt; text-transform: uppercase; letter-spacing: 0.6px;
-    border-bottom: 2pt solid #000; padding-bottom: 1mm; margin: 5mm 0 2.5mm;
-  }
-  .lead { font-size: 10pt; font-style: italic; margin: 0 0 2mm; }
+  body { font-family: "Helvetica Neue", Arial, sans-serif; color:#000; background:#fff;
+         font-size: 13pt; line-height: 1.4; margin: 0; }
+  h1 { font-size: 21pt; margin: 0 0 2mm; }
+  h2 { font-size: 14.5pt; text-transform: uppercase; letter-spacing: 1px;
+       border-bottom: 3pt solid #000; padding-bottom: 1.5mm; margin: 8mm 0 4mm; }
+  .lead { font-size: 11pt; margin: 0 0 3mm; }
 
-  .top3 { border: 2.5pt solid #000; padding: 3mm 3.5mm; margin: 0 0 2mm; break-inside: avoid; }
-  .top3 h2 { border: none; margin: 0 0 2mm; }
-  .top3 ol { margin: 0; padding-left: 6mm; }
-  .top3 li { margin: 0 0 1.6mm; }
+  .top3 { border: 3pt solid #000; padding: 4mm 5mm; margin: 0 0 3mm; break-inside: avoid; }
+  .top3 h2 { border:none; margin: 0 0 3mm; }
+  .top3 ol { margin: 0; padding-left: 7mm; }
+  .top3 li { margin: 0 0 3mm; }
 
-  table.say { width: 100%; border-collapse: collapse; margin-bottom: 1mm; }
-  table.say th, table.say td { border: 1pt solid #000; padding: 1.6mm 2mm; vertical-align: top; text-align: left; }
-  table.say th { font-size: 9.6pt; text-transform: uppercase; letter-spacing: 0.4px; width: 38%; }
-  table.say td { font-size: 10.6pt; }
+  .say { break-inside: avoid; margin: 0 0 4mm; }
+  .say .no { font-weight: bold; }
+  .say .yes { display:block; padding-left: 5mm; border-left: 3pt solid #000; margin: 1mm 0 0; }
+  .say .yes::before { content: "SAY: "; font-weight: bold; }
 
-  .qa { break-inside: avoid; margin: 0 0 2.8mm; padding-left: 9mm; position: relative; }
-  .qa .qn { position: absolute; left: 0; top: 0; font-weight: bold; font-size: 11.5pt; }
-  .qa .q { font-weight: bold; }
-  .qa .a { display: block; margin-top: 0.4mm; }
-  .qa .a b { font-variant: small-caps; }
-  .gap { font-weight: bold; border: 1.25pt solid #000; padding: 0 1.4mm; font-size: 8pt;
-         text-transform: uppercase; letter-spacing: 0.5px; white-space: nowrap; }
-  ul.tight { margin: 0.8mm 0 0; padding-left: 5mm; }
-  ul.tight li { margin: 0 0 0.6mm; }
-  hr.rule { border: none; border-top: 1.5pt solid #000; margin: 2mm 0; }
+  .qa { break-inside: avoid; margin: 0 0 6mm; }
+  .qa .q { font-weight: bold; font-size: 13.5pt; }
+  .qa ul { margin: 1.5mm 0 0; padding-left: 6mm; }
+  .qa li { margin: 0 0 1.8mm; }
+  .gap { display:inline-block; margin-top: 1.5mm; font-weight: bold;
+         border: 2pt solid #000; padding: 0.4mm 2mm; font-size: 10pt;
+         text-transform: uppercase; letter-spacing: 0.6px; }
+  .ok { break-inside: avoid; border: 2.5pt solid #000; padding: 3.5mm 4.5mm; }
+  .ok h2 { border:none; margin: 0 0 2.5mm; }
+  .ok li { margin: 0 0 1.5mm; }
 </style>
 </head>
 <body>
 
-  <h1>Interview Drill — creative-automation-pipeline</h1>
-  <p class="lead">Skim, do not read aloud. Volunteer the GAPs before they find them. Lead with strengths, own the holes.</p>
+  <h1>Interview Drill</h1>
+  <p class="lead">Volunteer the GAPs before they find them. Lead with strengths, own the holes.</p>
 
   <div class="top3">
-    <h2>Top 3 to own first</h2>
+    <h2>Own these 3 first</h2>
     <ol>
-      <li><b>Mid-run crash / ephemeral state.</b> In-memory Map + fire-and-forget IIFE. Crash loses every in-flight run; frontend gets 404. Deepest hole. Volunteer it.</li>
-      <li><b>How compliance actually scores.</b> They will go line by line. Name the bugs yourself: empty-palette-fails-all, overlay pollutes color check, prohibited-words only scans your own message string.</li>
-      <li><b>Concurrency / shared OUTPUT_DIR.</b> Two runs clobber the same files; /manifest returns the wrong run's data. Correctness bug, not just scale. Easy for them to spot.</li>
+      <li><b>Mid-run crash.</b> In-memory state + fire-and-forget. Crash loses the run, frontend 404s. Volunteer it.</li>
+      <li><b>How compliance scores.</b> They go line by line. Name the bugs yourself.</li>
+      <li><b>Shared output dir.</b> Two runs clobber each other; /manifest returns the wrong run.</li>
     </ol>
   </div>
 
   <h2>Say this, not that</h2>
-  <table class="say">
-    <tr><th>Do NOT say</th><td>Say instead</td></tr>
-    <tr><th>"Two AI agents"</th><td>"Two bounded orchestration modules; deterministic for-loops wrapping tool calls. No reasoning loop."</td></tr>
-    <tr><th>"Every AI call logs tokens, cost, latency"</th><td>"Per-call tokens + cost for Claude; run-level latency. Gemini image cost is stubbed at $0 today."</td></tr>
-    <tr><th>"Retries on the AI calls"</th><td>"Retries on Gemini image gen and Dropbox. Claude prompt + vision are not retried yet, known gap."</td></tr>
-    <tr><th>"Mastra-compatible, one-import swap"</th><td>"API-shape compatible so step contracts port; real Mastra adds resume/persistence I don't have."</td></tr>
-    <tr><th>"Compliance-checked creatives out"</th><td>"Two deterministic gates (color, legal words) + one advisory vision check; here are the failure modes."</td></tr>
-  </table>
 
-  <h2>The 10 questions — compressed answers</h2>
+  <div class="say"><span class="no">NOT "two AI agents"</span>
+    <span class="yes">two bounded orchestration modules. For-loops wrapping tool calls, no reasoning loop.</span></div>
 
-  <div class="qa"><span class="qn">1</span>
-    <span class="q">Process restarts mid-run. What happens?</span>
-    <span class="a"><b>A:</b> Total loss. State only in in-memory Map (runStore); workflow runs in fire-and-forget IIFE in the Express process; no queue, no checkpoint. Restart = empty Map, frontend polls /status and gets 404. Files on disk survive but nothing points to them. <span class="gap">Gap: severe</span></span></div>
+  <div class="say"><span class="no">NOT "every AI call logs cost"</span>
+    <span class="yes">per-call tokens + cost for Claude. Gemini image cost is stubbed at $0 today.</span></div>
 
-  <div class="qa"><span class="qn">2</span>
-    <span class="q">Step 4 fails on asset 30 of 100. What about 1 to 29?</span>
-    <span class="a"><b>A:</b> Whole run fails. Every step re-throws on first item error; workflow returns error, no partial manifest. Assets 1-29 orphaned on disk. Zero per-item isolation in gather/render/overlay. Only ComplianceChecker isolates per-item. <span class="gap">Gap: severe</span></span></div>
+  <div class="say"><span class="no">NOT "retries on the AI calls"</span>
+    <span class="yes">retries on Gemini + Dropbox. Claude prompt + vision not retried yet, known gap.</span></div>
 
-  <div class="qa"><span class="qn">3</span>
-    <span class="q">Walk me through retry/backoff. What is retryable and where applied?</span>
-    <span class="a"><b>A:</b> base*2^(n-1) backoff, +/-20% jitter, 4 attempts. 429/5xx retryable, 4xx terminal, unknown defaults retryable. Applied to Gemini + Dropbox only. <b>Two real bugs:</b> terminal message hardcoded "Image generation failed" even for Dropbox; classification is string-regex so "500ms" could read as HTTP 500. <span class="gap">Gap: minor</span></span></div>
+  <div class="say"><span class="no">NOT "Mastra, one-import swap"</span>
+    <span class="yes">API-shape compatible so step contracts port. Real Mastra adds resume/persistence I don't have.</span></div>
 
-  <div class="qa"><span class="qn">4</span>
-    <span class="q">Image gen and logo check are non-deterministic. Acceptable in compliance?</span>
-    <span class="a"><b>A:</b> Be precise. Color check + legal-word scan are deterministic (trust as gates). Gemini (no seed) and Claude vision (no temperature 0) are non-deterministic; logoPresent can flip between runs. Treat vision as advisory; pin temp 0 + reference-logo match before it gates. <span class="gap">Gap: medium</span></span></div>
+  <div class="say"><span class="no">NOT "compliance-checked output"</span>
+    <span class="yes">two deterministic gates (color, words) + one advisory vision check. Here are the failure modes.</span></div>
 
-  <div class="qa"><span class="qn">5</span>
-    <span class="q">No seed, no temperature. Can you reproduce a rejected image?</span>
-    <span class="a"><b>A:</b> No. Persist the final PNG + manifest, but not the resolved prompt, seed, or model version. Fix: capture prompt + seed + model in organizeOutputs manifest. Small add. <span class="gap">Gap: medium</span></span></div>
+  <h2>The 10 questions</h2>
 
-  <div class="qa"><span class="qn">6</span>
-    <span class="q">Exactly how does ComplianceChecker score palette, logo, words? Where does each fail?</span>
-    <span class="a"><b>A:</b> Spend time here.
-    <ul class="tight">
-      <li><b>Palette:</b> 50x50, quantize to 32-buckets, top 5 dominant, score = avg(1 - nearest RGB distance/max), pass &ge; 0.3. Fails: 0.3 is loose; runs on final.png so it scores its OWN black overlay bar; empty palette = 0 = every image FAILS.</li>
-      <li><b>Logo:</b> Claude vision "any logo/text/watermark?" No reference-logo compare; campaign TEXT reads as logo, so reports compliant when real logo absent. No retry, errors swallowed to false.</li>
-      <li><b>Words:</b> lowercase substring includes() on campaignMessage ONLY. Not image, not product copy, not OCR. Substring not word-boundary = false positives.</li>
+  <div class="qa"><span class="q">1. Process restarts mid-run. What happens?</span>
+    <ul>
+      <li>Total loss. State only in an in-memory Map.</li>
+      <li>Workflow runs fire-and-forget in the Express process. No queue, no checkpoint.</li>
+      <li>Restart = empty Map. Frontend polls /status, gets 404.</li>
+      <li>Files on disk survive but nothing points to them.</li>
     </ul>
-    <span class="gap">Gap: this is the one they drill</span></span></div>
+    <span class="gap">Gap: severe</span></div>
 
-  <div class="qa"><span class="qn">7</span>
-    <span class="q">Concurrency model? Two campaigns POST at once, what breaks?</span>
-    <span class="a"><b>A:</b> Map keyed by runId is safe; filesystem is not. OUTPUT_DIR is one shared dir, so both runs write the same final.png / manifest.json / compliance.json / generated/. They clobber. /manifest + /compliance read the single file with no runId, so always return the LAST run. Logo is global too. Fix: namespace paths by runId. <span class="gap">Gap: severe</span></span></div>
+  <div class="qa"><span class="q">2. Step 4 fails on asset 30 of 100. What about 1&ndash;29?</span>
+    <ul>
+      <li>Whole run fails. Every step re-throws on first error.</li>
+      <li>No partial manifest. Assets 1&ndash;29 orphaned on disk.</li>
+      <li>Only ComplianceChecker isolates per-item.</li>
+    </ul>
+    <span class="gap">Gap: severe</span></div>
 
-  <div class="qa"><span class="qn">8</span>
-    <span class="q">What is the runtime doing during a 100-product run? Where's the parallelism?</span>
-    <span class="a"><b>A:</b> None. Single Node process, all loops sequential, no Promise.all, no workers, no queue. 300 serial Sharp ops + 100 serial Claude+Gemini round trips + serial vision. Defensible for POC: correctness first, then bounded per-product concurrency + queue. <span class="gap">Gap: scale only</span></span></div>
+  <div class="qa"><span class="q">3. Walk me through retry/backoff.</span>
+    <ul>
+      <li>base x 2^(n-1), +/-20% jitter, 4 attempts.</li>
+      <li>429/5xx retry, 4xx terminal, unknown defaults to retry.</li>
+      <li>Applied to Gemini + Dropbox only.</li>
+      <li>Bug to admit: terminal message hardcoded "image generation failed" even for Dropbox.</li>
+    </ul>
+    <span class="gap">Gap: minor</span></div>
 
-  <div class="qa"><span class="qn">9</span>
-    <span class="q">Manifest says uploadStatus:failed but run completes. Success or failure?</span>
-    <span class="a"><b>A:</b> Soft failure by design. organizeOutputs catches per-file upload errors, stamps failed + falls back to local path, run still "done." Reasonable (degrade, don't fail) but frame as deliberate. Gap: top-level status doesn't surface partial upload failure. <span class="gap">Gap: minor</span></span></div>
+  <div class="qa"><span class="q">4. Non-determinism in a compliance system?</span>
+    <ul>
+      <li>Color check + word scan: deterministic. Trust as gates.</li>
+      <li>Gemini (no seed) + vision (no temp 0): non-deterministic.</li>
+      <li>logoPresent can flip between runs. Treat vision as advisory.</li>
+    </ul>
+    <span class="gap">Gap: medium</span></div>
 
-  <div class="qa"><span class="qn">10</span>
-    <span class="q">POC to production. What do you build first?</span>
-    <span class="a"><b>A, in order:</b> (1) durable run state + job queue (Redis/BullMQ or SQS + runs table in the Postgres stub) so crashes resume and /status survives. (2) Per-run output namespacing. (3) Per-item isolation + partial-success manifest. (4) Auth + multi-tenancy (zero auth today; loadFromUrl fetches any user URL = SSRF). (5) Harden compliance: temp 0, reference-logo match, OCR for prohibited words, real palette thresholds. <span class="gap">Strongest question, lead with queue + runs table</span></span></div>
+  <div class="qa"><span class="q">5. Can you reproduce a rejected image?</span>
+    <ul>
+      <li>No. You save the PNG + manifest, but not prompt, seed, or model version.</li>
+      <li>Fix: capture prompt + seed + model in the manifest. Small add.</li>
+    </ul>
+    <span class="gap">Gap: medium</span></div>
 
-  <hr class="rule">
-  <p class="lead">Accurate to lean on: 6 sequential steps, Zod input+output per step validated by the runner, 3 aspect ratios, SVG message + logo overlay, runId + 750ms polling (no SSE in code), pluggable storage (local/dropbox live), Postgres deferral is honest (db is an empty stub).</p>
+  <div class="qa"><span class="q">6. Exactly how does compliance score? (they drill this)</span>
+    <ul>
+      <li><b>Palette:</b> top-5 dominant colors, RGB distance, pass &ge; 0.3. Loose. Scores its OWN overlay bar. Empty palette = 0 = every image FAILS.</li>
+      <li><b>Logo:</b> Claude vision "any logo/text?" No reference match. Campaign TEXT reads as a logo. No retry, errors swallowed to false.</li>
+      <li><b>Words:</b> substring scan of campaignMessage ONLY. Not the image, not OCR. False positives possible.</li>
+    </ul>
+    <span class="gap">Gap: the big one</span></div>
+
+  <div class="qa"><span class="q">7. Two campaigns POST at once. What breaks?</span>
+    <ul>
+      <li>Map is keyed by runId, safe. Filesystem is not.</li>
+      <li>One shared output dir = same files overwritten.</li>
+      <li>/manifest + /compliance read the single file, always return the LAST run.</li>
+    </ul>
+    <span class="gap">Gap: severe</span></div>
+
+  <div class="qa"><span class="q">8. Where's the parallelism in a 100-product run?</span>
+    <ul>
+      <li>None. All loops sequential, no Promise.all, no workers.</li>
+      <li>Defensible for a POC: correctness first.</li>
+      <li>Next: bounded per-product concurrency + a queue.</li>
+    </ul>
+    <span class="gap">Gap: scale only</span></div>
+
+  <div class="qa"><span class="q">9. uploadStatus:failed but run completes. Success or failure?</span>
+    <ul>
+      <li>Soft failure by design. Catches per-file, falls back to local path, run still "done".</li>
+      <li>Reasonable, but frame it as deliberate.</li>
+      <li>Gap: top-level status doesn't surface the partial failure.</li>
+    </ul>
+    <span class="gap">Gap: minor</span></div>
+
+  <div class="qa"><span class="q">10. POC to production. What first?</span>
+    <ul>
+      <li>1. Durable run state + job queue (runs table in the Postgres stub).</li>
+      <li>2. Per-run output namespacing.</li>
+      <li>3. Per-item isolation + partial-success manifest.</li>
+      <li>4. Auth + multi-tenancy (zero auth today; loadFromUrl = SSRF).</li>
+      <li>5. Harden compliance: temp 0, reference-logo match, OCR for words.</li>
+    </ul>
+    <span class="gap">Strongest question. Lead with queue + runs table.</span></div>
+
+  <div class="ok">
+    <h2>True &mdash; lean on these</h2>
+    <ul>
+      <li>6 sequential steps, Zod input + output validated per step.</li>
+      <li>3 aspect ratios, SVG message + logo overlay.</li>
+      <li>runId + 750ms polling (no SSE in code).</li>
+      <li>Pluggable storage (local + dropbox live).</li>
+      <li>Postgres deferral is honest (db is an empty stub).</li>
+      <li>Numbers: ~$0.12/run, ~10 AI calls, 6 creatives, image ~$0.04 each.</li>
+    </ul>
+  </div>
 
 </body>
 </html>

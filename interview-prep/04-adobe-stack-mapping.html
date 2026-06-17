@@ -4,60 +4,70 @@
 <meta charset="utf-8">
 <title>Adobe Stack Mapping</title>
 <style>
-  @page { size: letter; margin: 13mm 13mm; }
+  @page { size: letter; margin: 15mm 16mm; }
   * { box-sizing: border-box; }
   html { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-  body { font-family: Georgia, "Times New Roman", serif; color:#000; background:#fff;
-         font-size: 11pt; line-height: 1.32; margin: 0; }
-  h1 { font-size: 17pt; margin: 0 0 2mm; }
-  h2 { font-size: 12.5pt; text-transform: uppercase; letter-spacing: 0.6px;
-       border-bottom: 2pt solid #000; padding-bottom: 1mm; margin: 4.5mm 0 2.5mm; }
-  .lead { font-size: 10pt; font-style: italic; margin: 0 0 2mm; }
-  table.map { width:100%; border-collapse: collapse; }
-  table.map th, table.map td { border: 1pt solid #000; padding: 1.8mm 2mm; vertical-align: top; text-align: left; }
-  table.map th { font-size: 9.2pt; text-transform: uppercase; letter-spacing: 0.4px; }
-  table.map td { font-size: 10pt; }
-  table.map td.poc { font-family:"Courier New", monospace; font-size: 9.4pt; width: 30%; }
-  table.map td.adobe { width: 34%; font-weight: bold; }
-  .box { border: 2.5pt solid #000; padding: 3mm 3.5mm; margin: 2.5mm 0; break-inside: avoid; }
-  .box h2 { border:none; margin: 0 0 2mm; }
-  ul.tight { margin: 1mm 0 0; padding-left: 5mm; }
-  ul.tight li { margin: 0 0 1mm; }
-  .warn { font-size: 9pt; font-style: italic; border-top: 1.5pt solid #000; padding-top: 1.5mm; margin-top: 3mm; }
+  body { font-family: "Helvetica Neue", Arial, sans-serif; color:#000; background:#fff;
+         font-size: 13pt; line-height: 1.4; margin: 0; }
+  h1 { font-size: 21pt; margin: 0 0 2mm; }
+  h2 { font-size: 14.5pt; text-transform: uppercase; letter-spacing: 1px;
+       border-bottom: 3pt solid #000; padding-bottom: 1.5mm; margin: 8mm 0 4mm; }
+  .lead { font-size: 11pt; margin: 0 0 3mm; }
+  .map { break-inside: avoid; margin: 0 0 5mm; }
+  .map .row { font-size: 13pt; }
+  .map .poc { font-family:"Courier New", monospace; font-weight: bold; }
+  .map .arrow { font-weight: bold; }
+  .map .adobe { font-weight: bold; }
+  .map .pt { display:block; padding-left: 5mm; border-left: 3pt solid #000; margin: 1mm 0 0; font-size: 12pt; }
+  .box { border: 3pt solid #000; padding: 4mm 5mm; margin: 0 0 4mm; break-inside: avoid; }
+  .box h2 { border:none; margin: 0 0 3mm; }
+  ul.tight { margin: 1mm 0 0; padding-left: 6mm; }
+  ul.tight li { margin: 0 0 2.5mm; }
+  .warn { font-size: 11pt; border-top: 3pt solid #000; padding-top: 2mm; margin-top: 4mm; }
+  .warn b { text-transform: uppercase; }
 </style>
 </head>
 <body>
-  <h1>"If I built this at Adobe" — Stack Mapping</h1>
-  <p class="lead">This POC is deliberately vendor-neutral. Show you know it mirrors Adobe's own GenStudio pattern, and that the architecture ports directly. This is your credibility multiplier.</p>
+  <h1>"If I built this at Adobe"</h1>
+  <p class="lead">This POC is vendor-neutral on purpose. Show it mirrors Adobe's GenStudio pattern and ports directly. Your credibility multiplier.</p>
 
-  <table class="map">
-    <tr><th>Your POC component</th><th>Adobe equivalent</th><th>The point to make</th></tr>
-    <tr><td class="poc">generateAssetWithGenAI (Gemini)</td><td class="adobe">Adobe Firefly / Firefly Services (text-to-image API)</td><td>Swap behind the one generateImage() seam. Firefly's pitch is commercially-safe, enterprise-indemnified generation, which matters for the exact compliance problem I'm solving.</td></tr>
-    <tr><td class="poc">renderAspectRatios + applyOverlay (Sharp)</td><td class="adobe">Firefly Generative Expand + Photoshop API; InDesign API for templated layout</td><td>Smart-crop and layer compositing become API calls instead of raw Sharp math; brand templates live in InDesign / Express.</td></tr>
-    <tr><td class="poc">existingAssetPath reuse</td><td class="adobe">AEM Assets (DAM) + Creative Cloud Libraries</td><td>"Reuse vs. generate" becomes a DAM lookup against approved brand assets, not a file path.</td></tr>
-    <tr><td class="poc">complianceChecker (color / logo / words)</td><td class="adobe">GenStudio brand checks; AEM Smart Tags / Content Tagging; Content Credentials (C2PA)</td><td>My heuristics map to managed brand-guideline checks, plus provenance via Content Credentials for "is this AI-made and on-brand."</td></tr>
-    <tr><td class="poc">campaignWorkflow + brief schema</td><td class="adobe">GenStudio for Performance Marketing</td><td>This is the headline: brief-to-variants-at-scale IS the GenStudio pattern. My contract-driven workflow is the same shape.</td></tr>
-    <tr><td class="poc">storage adapter + manifest</td><td class="adobe">AEM Assets for storage; Frame.io for review + approval</td><td>Outputs flow into an approval workflow, not just a folder. Manifest becomes asset metadata.</td></tr>
-    <tr><td class="poc">cost ledger + Zod contracts + logs</td><td class="adobe">My value-add layer on top</td><td>Observability and typed contracts are what make any of the above trustworthy in a customer's prod.</td></tr>
-  </table>
+  <h2>POC &rarr; Adobe</h2>
+
+  <div class="map"><div class="row"><span class="poc">generateAssetWithGenAI</span> <span class="arrow">&rarr;</span> <span class="adobe">Adobe Firefly / Firefly Services</span></div>
+    <span class="pt">Swaps behind one generateImage() seam. Firefly = commercially-safe, indemnified generation, which is the whole compliance pitch.</span></div>
+
+  <div class="map"><div class="row"><span class="poc">renderAspectRatios + applyOverlay</span> <span class="arrow">&rarr;</span> <span class="adobe">Photoshop API + InDesign API</span></div>
+    <span class="pt">Smart-crop + compositing become API calls instead of raw Sharp. Brand templates live in InDesign / Express.</span></div>
+
+  <div class="map"><div class="row"><span class="poc">existingAssetPath reuse</span> <span class="arrow">&rarr;</span> <span class="adobe">AEM Assets (DAM) + CC Libraries</span></div>
+    <span class="pt">"Reuse vs. generate" becomes a DAM lookup against approved brand assets.</span></div>
+
+  <div class="map"><div class="row"><span class="poc">complianceChecker</span> <span class="arrow">&rarr;</span> <span class="adobe">GenStudio brand checks + Content Credentials (C2PA)</span></div>
+    <span class="pt">My heuristics map to managed brand-guideline checks, plus provenance.</span></div>
+
+  <div class="map"><div class="row"><span class="poc">campaignWorkflow + brief schema</span> <span class="arrow">&rarr;</span> <span class="adobe">GenStudio for Performance Marketing</span></div>
+    <span class="pt">The headline: brief-to-variants-at-scale IS the GenStudio pattern. Same shape.</span></div>
+
+  <div class="map"><div class="row"><span class="poc">storage adapter + manifest</span> <span class="arrow">&rarr;</span> <span class="adobe">AEM Assets + Frame.io</span></div>
+    <span class="pt">Outputs flow into a review/approval workflow, not just a folder.</span></div>
 
   <div class="box">
     <h2>One-liner positioning</h2>
-    "I built this neutral on purpose so the pattern is portable. The architecture, a typed brief contract, then gather, render, brand, and compliance as isolated steps, drops straight onto Firefly Services for generation and GenStudio for orchestration. The seams I designed, the storage adapter and the single generateImage() function, are exactly where Adobe's APIs would plug in."</p>
+    "I built it neutral on purpose so the pattern is portable. A typed brief contract, then gather, render, brand, compliance as isolated steps, drops straight onto Firefly Services for generation and GenStudio for orchestration. My seams, the storage adapter and the single generateImage() function, are exactly where Adobe's APIs plug in."
   </div>
 
   <div class="box">
-    <h2>Scale-to-prod on Adobe (if they push)</h2>
+    <h2>Scale-to-prod on Adobe (if pushed)</h2>
     <ul class="tight">
-      <li>Generation: Firefly Services, with custom-trained brand models per client where available.</li>
-      <li>Orchestration + durability: a real job queue and a runs table, fronting GenStudio-style variant generation.</li>
-      <li>Brand + legal: managed brand checks + Content Credentials for provenance, replacing my three heuristics.</li>
-      <li>Review: Frame.io approval gates before assets are published.</li>
-      <li>Asset lifecycle: AEM Assets as the system of record for reuse and governance.</li>
+      <li>Generation: Firefly Services, custom brand models per client.</li>
+      <li>Durability: real job queue + runs table fronting variant generation.</li>
+      <li>Brand + legal: managed checks + Content Credentials for provenance.</li>
+      <li>Review: Frame.io approval gates before publish.</li>
+      <li>Assets: AEM Assets as the system of record.</li>
     </ul>
   </div>
 
-  <p class="warn">Sanity-check exact product names out loud only if confident. If unsure, say "Adobe's generation API" or "Adobe's brand-check tooling" and let them supply the precise name. Getting the architecture mapping right matters more than the exact SKU, and never guess a feature you can't defend.</p>
+  <p class="warn"><b>Caveat:</b> name exact products only if confident. Unsure? Say "Adobe's generation API" and let them supply the name. The architecture mapping matters more than the SKU. Never guess a feature you can't defend.</p>
 
 </body>
 </html>

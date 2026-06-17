@@ -2,80 +2,89 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>FDE Narrative, Behavioral and Questions</title>
+<title>FDE Narrative and Behavioral</title>
 <style>
-  @page { size: letter; margin: 13mm 13mm; }
+  @page { size: letter; margin: 15mm 16mm; }
   * { box-sizing: border-box; }
   html { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-  body { font-family: Georgia, "Times New Roman", serif; color:#000; background:#fff;
-         font-size: 11.5pt; line-height: 1.34; margin: 0; }
-  h1 { font-size: 17pt; margin: 0 0 3mm; }
-  h2 { font-size: 12.5pt; text-transform: uppercase; letter-spacing: 0.6px;
-       border-bottom: 2pt solid #000; padding-bottom: 1mm; margin: 5mm 0 2.5mm; }
-  .lead { font-size: 10pt; font-style: italic; margin: 0 0 2mm; }
-  .box { border: 2.5pt solid #000; padding: 3mm 3.5mm; margin: 0 0 2mm; break-inside: avoid; }
-  .box h2 { border: none; margin: 0 0 2mm; }
-  .blk { break-inside: avoid; margin: 0 0 3mm; }
-  .blk .q { font-weight: bold; }
-  .blk .t { display:block; font-size: 9.4pt; font-style: italic; margin: 0.2mm 0 0.6mm; }
-  .blk .a { display:block; }
-  ul.tight { margin: 1mm 0 0; padding-left: 5mm; }
-  ul.tight li { margin: 0 0 1mm; }
-  .pin { font-weight: bold; border: 1.25pt solid #000; padding: 0 1.4mm; font-size: 8.6pt;
-         text-transform: uppercase; letter-spacing: 0.4px; white-space: nowrap; }
+  body { font-family: "Helvetica Neue", Arial, sans-serif; color:#000; background:#fff;
+         font-size: 13pt; line-height: 1.4; margin: 0; }
+  h1 { font-size: 21pt; margin: 0 0 2mm; }
+  h2 { font-size: 14.5pt; text-transform: uppercase; letter-spacing: 1px;
+       border-bottom: 3pt solid #000; padding-bottom: 1.5mm; margin: 8mm 0 4mm; }
+  .lead { font-size: 11pt; margin: 0 0 3mm; }
+  .box { border: 3pt solid #000; padding: 4mm 5mm; margin: 0 0 4mm; break-inside: avoid; }
+  .box h2 { border:none; margin: 0 0 3mm; }
+  .pitch { break-inside: avoid; margin: 0 0 3mm; }
+  .pitch p { margin: 0 0 2.5mm; }
+  .blk { break-inside: avoid; margin: 0 0 6mm; }
+  .blk .q { font-weight: bold; font-size: 13.5pt; }
+  .blk .test { display:block; font-size: 11pt; margin: 0.5mm 0 1.5mm; }
+  .blk .test::before { content: "TESTING: "; font-weight: bold; }
+  .blk .anchor { display:block; padding-left: 5mm; border-left: 3pt solid #000; }
+  .blk .anchor::before { content: "ANCHOR: "; font-weight: bold; }
+  .you { background:#000; color:#fff; font-weight: bold; padding: 0 1.5mm; }
+  ul.tight { margin: 1mm 0 0; padding-left: 6mm; }
+  ul.tight li { margin: 0 0 2.5mm; }
 </style>
 </head>
 <body>
-  <h1>FDE Layer: Narrative, Behavioral, Questions</h1>
-  <p class="lead">The code is the easy part of a final round. This decides it. Fill the [brackets] with YOUR real stories before the call.</p>
+  <h1>FDE: Narrative + Behavioral</h1>
+  <p class="lead">The code is the easy part of a final round. This decides it. Fill the <span class="you">YOUR STORY</span> slots before the call.</p>
 
   <div class="box">
     <h2>30-second opening</h2>
-    "Enterprise marketing teams need hundreds of on-brand creative variants per campaign, and doing it by hand is too slow and too expensive. I built a six-step pipeline: a campaign brief in YAML or JSON goes in, and compliance-checked creatives come out. It loads and validates the brief, gathers or generates each product image, renders three aspect ratios, applies the brand overlay, organizes the outputs, then runs compliance. Every step has a typed Zod contract, every Claude call logs tokens and cost, and the whole thing is a deliberate two-to-three hour POC, so I scoped auth, queuing, and multi-tenancy out on purpose and documented them. Happy to go deep wherever you want."
+    <div class="pitch">
+      <p>"Marketing teams need hundreds of on-brand variants per campaign, and by hand it's too slow and expensive.</p>
+      <p>I built a 6-step pipeline: a brief in YAML or JSON goes in, compliance-checked creatives come out.</p>
+      <p>Load the brief, gather or generate each image, render 3 aspect ratios, apply the brand overlay, organize outputs, check compliance.</p>
+      <p>Every step has a typed contract, every Claude call logs cost. It's a deliberate 2-3 hour POC, so I scoped out auth, queuing, and multi-tenancy on purpose.</p>
+      <p>Happy to go deep wherever you want."</p>
+    </div>
     <span class="lead">Then stop talking. Let them steer.</span>
   </div>
 
   <h2>Behavioral, framed for FDE</h2>
 
-  <div class="blk"><span class="q">Why move from building product to a customer-facing FDE role? Why Adobe?</span>
-    <span class="t">Testing: do you actually want this job, or is it a fallback.</span>
-    <span class="a">[Your real reason.] Anchor: "I like owning the line from a customer's messy requirement to a shipped technical answer. This POC is that instinct, I turned a vague 'we need variants at scale' into a concrete contract-driven pipeline. Adobe is where creative tooling and GenAI actually meet at enterprise scale, so the customer problems are real and the platform is deep."</span></div>
+  <div class="blk"><span class="q">Why a customer-facing FDE role? Why Adobe?</span>
+    <span class="test">do you actually want this, or is it a fallback.</span>
+    <span class="anchor"><span class="you">YOUR REASON</span> + "I like owning the line from a messy customer requirement to a shipped answer. Adobe is where creative tooling and GenAI meet at enterprise scale."</span></div>
 
-  <div class="blk"><span class="q">Tell me about ambiguous or shifting requirements.</span>
-    <span class="t">Testing: do you scope, or do you boil the ocean.</span>
-    <span class="a">[Your story.] POC anchor: "The brief format wasn't given, so I defined the contract myself with Zod and made the schema the single source of truth. When reuse-vs-generate was unclear, I built one field, existingAssetPath, with an explicit fallback to generation. I picked the 80% path and documented the rest as deferred."</span></div>
+  <div class="blk"><span class="q">Ambiguous or shifting requirements.</span>
+    <span class="test">do you scope, or boil the ocean.</span>
+    <span class="anchor"><span class="you">YOUR STORY</span> + "The brief format wasn't given, so I defined the Zod contract myself and made it the source of truth. I picked the 80% path and documented the rest as deferred."</span></div>
 
   <div class="blk"><span class="q">A technical tradeoff under time pressure.</span>
-    <span class="t">Testing: can you decide and defend, not just list options.</span>
-    <span class="a">POC anchors, pick one: (1) polling over SSE because the Replit proxy buffers chunks, simplest thing that survived the environment. (2) deterministic compliance gates (color, legal words) as the trusted checks, vision logo check as advisory, because I won't gate a release on a non-deterministic call. (3) failure isolation in compliance but not yet in generation, a conscious POC scope cut I can name out loud.</span></div>
+    <span class="test">can you decide and defend, not just list options.</span>
+    <span class="anchor">pick one: polling over SSE (proxy buffered chunks) / deterministic compliance as the trusted gate, vision as advisory / failure isolation in compliance but not generation, a conscious scope cut.</span></div>
 
-  <div class="blk"><span class="q">A customer wants something the product can't do, or shouldn't.</span>
-    <span class="t">Testing: do you push back well and offer a path.</span>
-    <span class="a">[Your story.] Stance: "I separate the underlying need from the asked-for feature, confirm the need, then offer the closest supported path plus the cost of the bespoke one. I'd rather ship the 90% they can use today than promise the 100% that slips."</span></div>
+  <div class="blk"><span class="q">Customer wants something the product can't do.</span>
+    <span class="test">do you push back well and offer a path.</span>
+    <span class="anchor"><span class="you">YOUR STORY</span> + "I separate the need from the asked-for feature, confirm the need, then offer the closest supported path plus the cost of the bespoke one."</span></div>
 
-  <div class="blk"><span class="q">Disagreeing with a stakeholder or teammate.</span>
-    <span class="t">Testing: can you hold a position without being difficult.</span>
-    <span class="a">[Your story.] Anchor on evidence: "I make the disagreement concrete and testable, then defer to data. In this POC, if someone said 'just trust the vision check,' I'd show that it has no seed and no temperature pin, so it flips between runs, and propose pinning it before we rely on it."</span></div>
+  <div class="blk"><span class="q">Disagreeing with a stakeholder.</span>
+    <span class="test">can you hold a position without being difficult.</span>
+    <span class="anchor"><span class="you">YOUR STORY</span> + "I make it concrete and testable, then defer to data. If someone said 'just trust the vision check,' I'd show it has no seed and flips between runs."</span></div>
 
   <div class="box">
-    <h2>FDE talk-track reminders</h2>
+    <h2>Talk-track reminders</h2>
     <ul class="tight">
-      <li>Lead with the <b>customer problem</b>, not the tech. Every answer ties back to "what does the marketing team get."</li>
-      <li><b>Name your scope cuts before they do.</b> "I deferred X on purpose" reads as senior. Getting caught reads as junior.</li>
-      <li>Make tradeoffs <b>explicit and reversible</b>: "I chose A over B because C, and here's when I'd revisit."</li>
-      <li>Show your <b>observability</b>: typed contracts, structured logs, a cost ledger. FDEs are trusted in prod, so prove you can see what's happening.</li>
-      <li>When you don't know, say so, then say how you'd find out. Confidence, not bluffing.</li>
+      <li>Lead with the <b>customer problem</b>, not the tech.</li>
+      <li><b>Name your scope cuts before they do.</b> "I deferred X on purpose" = senior.</li>
+      <li>Tradeoffs explicit: "I chose A over B because C, and here's when I'd revisit."</li>
+      <li>Show observability: typed contracts, structured logs, cost ledger.</li>
+      <li>Don't know? Say so, then say how you'd find out.</li>
     </ul>
   </div>
 
   <div class="box">
-    <h2>Ask them (pick 2-3) <span class="pin">end strong</span></h2>
+    <h2>Ask them (pick 2&ndash;3)</h2>
     <ul class="tight">
-      <li>"When an FDE drops into a customer, how much is greenfield building vs. integrating into the customer's existing Adobe stack?"</li>
-      <li>"Where does the FDE handoff to the product or core engineering team usually happen, and what makes that handoff go badly?"</li>
-      <li>"What separates an FDE who's thriving here at one year from one who's struggling?"</li>
-      <li>"How much of the role is GenAI solutioning today vs. classic integration work, and where is that mix heading?"</li>
-      <li>"What's a customer problem your team is fighting right now that you wish was already solved?"</li>
+      <li>"How much of an FDE engagement is greenfield building vs. integrating into the customer's existing Adobe stack?"</li>
+      <li>"Where does the FDE handoff to core engineering happen, and what makes it go badly?"</li>
+      <li>"What separates an FDE thriving here at one year from one who's struggling?"</li>
+      <li>"How much of the role is GenAI solutioning vs. classic integration today, and where's that heading?"</li>
+      <li>"What customer problem is your team fighting right now that you wish was solved?"</li>
     </ul>
   </div>
 
